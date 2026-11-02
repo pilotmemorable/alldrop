@@ -1,0 +1,16 @@
+dist/
+build/
+*.log
+.DS_Store
+android/app/src/main/jniLibs/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+ios/AllDrop.xcodeproj/
+ios/Frameworks/
+*.xcarchive
+# Kept in the AIRDROP folder instead: icon sources, App Store texts and screenshots
+assets/*
+!assets/mac-1024.png
+ios/fastlane/
