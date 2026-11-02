@@ -1,0 +1,42 @@
+AllDrop - macOS ILK ACILIS
+===========================
+
+1) AllDrop.app dosyasini "Uygulamalar" (Applications) klasorune surukleyin.
+
+2) Ilk acilista macOS "gelistirici dogrulanamadi" uyarisi verebilir (uygulama
+   App Store disindan geldigi icin). Bir kez izin vermeniz yeterli:
+
+   - macOS 10.13 - 14 (High Sierra ... Sonoma):
+     AllDrop'e Control tusuna basili tutarak tiklayin (sag tik) > "Ac" > "Ac".
+
+   - macOS 15 Sequoia ve sonrasi:
+     Cift tiklayin, uyari cikinca "Bitti"ye basin. Sonra
+     Sistem Ayarlari > Gizlilik ve Guvenlik > en altta "Yine de Ac" > sifreniz.
+
+   - "Hasarli, acilamiyor" derse Terminal'de bir kez su komutu calistirin:
+       xattr -cr /Applications/AllDrop.app
+
+3) "Yerel agdaki aygitlari bulmak istiyor" sorusuna "Izin Ver" deyin.
+   (Bu izin olmadan diger cihazlar gorunmez.)
+
+4) AllDrop tarayicinizda acilir. Dock'ta simgesi yoktur; ekrani tekrar
+   acmak icin uygulamaya yeniden cift tiklayin. Kapatmak icin: Ayarlar > AllDrop'i kapat.
+
+Alinan dosyalar: ~/Indirilenler/AllDrop  (Downloads/AllDrop)
+
+
+AllDrop - FIRST RUN ON macOS
+=============================
+
+1) Drag AllDrop.app into Applications.
+2) macOS may say the developer cannot be verified (the app is not from the App Store):
+   - macOS 10.13 - 14: Control-click AllDrop > Open > Open.
+   - macOS 15 Sequoia and later: double-click, press Done, then
+     System Settings > Privacy & Security > "Open Anyway" > your password.
+   - If it says the app "is damaged", run once in Terminal:
+       xattr -cr /Applications/AllDrop.app
+3) Allow "find devices on your local network" - otherwise no devices appear.
+4) AllDrop opens in your browser. It has no Dock icon; double-click the app
+   again to bring the window back. Quit from Settings > Quit AllDrop.
+
+Received files: ~/Downloads/AllDrop

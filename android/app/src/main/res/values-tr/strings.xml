@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AllDrop</string>
+    <string name="ch_service">Arka planda çalışma</string>
+    <string name="ch_offers">Gelen dosyalar</string>
+    <string name="running_title">AllDrop açık</string>
+    <string name="running_text">Yakındaki cihazlar size dosya gönderebilir.</string>
+    <string name="stop">Kapat</string>
+    <string name="offer_title">%1$s size dosya göndermek istiyor</string>
+    <string name="offer_text">%1$s dosya · incelemek için dokunun</string>
+    <string name="starting">Başlatılıyor…</string>
+    <string name="engine_failed">Aktarım motoru bu cihazda başlatılamadı.</string>
+    <string name="no_viewer">Bu dosyayı açacak uygulama bulunamadı.</string>
+    <string name="shared_ready">%1$d dosya hazır – bir cihaz seçin</string>
+    <string name="offer_code">%1$s dosya · kod: %2$s</string>
+</resources>

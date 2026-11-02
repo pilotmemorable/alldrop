@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AllDrop: All Device</title>
+<meta name="description" content="Windows, Mac, Android, iPhone ve iPad arasında AirDrop gibi kablosuz dosya paylaşımı. Kurulum yok, bulut yok.">
+<link rel="icon" type="image/png" href="icon-64.png">
+<style>
+:root {
+  --bg: #f4f6fa; --card: #ffffff; --ink: #12161c; --muted: #5b6573; --line: #e2e6ee;
+  --accent: #0a74f0; --accent-ink: #ffffff; --soft: #eaf2ff; --ok: #0f8a55;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1116; --card: #161a21; --ink: #e9edf2; --muted: #9ba5b3; --line: #262d38;
+    --accent: #3d95ff; --accent-ink: #ffffff; --soft: #15233a; --ok: #5fd39a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; }
+.logo img { width: 34px; height: 34px; border-radius: 9px; }
+.lang { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 10px; padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+.hero { padding: 42px 0 30px; text-align: center; }
+.hero h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.1; margin: 0 0 14px; letter-spacing: -.02em; }
+.hero p { color: var(--muted); font-size: clamp(16px, 2.2vw, 19px); max-width: 700px; margin: 0 auto 26px; }
+.cta { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: var(--accent-ink); text-decoration: none; font-weight: 650; padding: 14px 24px; border-radius: 14px; font-size: 17px; }
+.cta small { font-weight: 500; opacity: .85; }
+.cta-note { color: var(--muted); font-size: 14px; margin-top: 12px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 22px; }
+.pill { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 13px; font-size: 14px; color: var(--muted); }
+h2 { font-size: 24px; margin: 46px 0 16px; letter-spacing: -.01em; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; }
+.card.hl { border-color: var(--accent); box-shadow: 0 0 0 3px var(--soft); }
+.card h3 { margin: 0 0 4px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+.card h3 svg { width: 24px; height: 24px; color: var(--accent); flex-shrink: 0; }
+.card .req { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+.card .btns { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+.btn { display: flex; justify-content: space-between; align-items: center; text-decoration: none; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; color: var(--ink); font-weight: 600; font-size: 15px; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn span { font-weight: 500; font-size: 13px; opacity: .8; }
+.note { font-size: 13.5px; color: var(--muted); margin: 10px 0 0; }
+.steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.step::before { counter-increment: s; content: counter(s); display: inline-flex; width: 30px; height: 30px; border-radius: 50%; background: var(--soft); color: var(--accent); align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px; }
+.step h4 { margin: 0 0 4px; font-size: 16px; }
+.step p { margin: 0; color: var(--muted); font-size: 14.5px; }
+details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin-bottom: 10px; }
+summary { cursor: pointer; font-weight: 600; }
+details p, details li { color: var(--muted); font-size: 15px; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13.5px; background: var(--soft); padding: 1px 6px; border-radius: 6px; }
+.sec { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.sec div { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.sec b { display: block; margin-bottom: 4px; }
+.sec p { margin: 0; color: var(--muted); font-size: 14.5px; }
+footer { color: var(--muted); font-size: 13.5px; text-align: center; padding: 40px 0 50px; }
+@media (max-width: 600px) { .wrap { padding: 0 16px; } .hero { padding-top: 22px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><img src="icon-64.png" alt="">AllDrop</div>
+    <button class="lang" id="lang" type="button">English</button>
+  </header>
+
+  <section class="hero">
+    <h1 data-t="h1">Telefon, tablet ve bilgisayar arasında kablosuz dosya gönderin</h1>
+    <p data-t="sub">Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer. Aynı Wi-Fi'deki cihazlar birbirini görür; dosyalar kablo, internet ya da bulut olmadan doğrudan cihazdan cihaza gider.</p>
+    <a class="cta" id="cta" href="#indir"><span data-t="ctaAll">İndirmeler</span></a>
+    <div class="cta-note" id="ctaNote"></div>
+    <div class="pills">
+      <span class="pill" data-t="p1">Kurulum yok · tek dosya</span>
+      <span class="pill" data-t="p2">Bulut yok · yerel ağ</span>
+      <span class="pill" data-t="p3">TLS şifreli</span>
+      <span class="pill" data-t="p4">6 haneli güvenlik kodu</span>
+      <span class="pill" data-t="p5">Klasör ve büyük dosya</span>
+    </div>
+  </section>
+
+  <h2 id="indir" data-t="dl">İndir</h2>
+  <div class="grid">
+    <div class="card" data-os="windows">
+      <h3><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 4h15A1.5 1.5 0 0 1 21 5.5v10a1.5 1.5 0 0 1-1.5 1.5H14v2h2.5v1.5h-9V19H10v-2H4.5A1.5 1.5 0 0 1 3 15.5v-10A1.5 1.5 0 0 1 4.5 4zM5 6v9h14V6H5z"/></svg>Windows</h3>
+      <p class="req" data-t="winReq">Windows 7, 8, 8.1, 10 ve 11 · kurulum gerektirmez</p>
+      <div class="btns">
+        <a class="btn primary" data-file="AllDrop-Windows-64bit.exe" href="#"><b data-t="w64">64 bit (çoğu bilgisayar)</b><span>.exe</span></a>
+        <a class="btn" data-file="AllDrop-Windows-32bit.exe" href="#"><b data-t="w32">32 bit (eski bilgisayarlar)</b><span>.exe</span></a>
+        <a class="btn" data-file="AllDrop-Windows-ARM64.exe" href="#"><b>ARM64</b><span>.exe</span></a>
+      </div>
+      <p class="note" data-t="winNote">“Windows bilgisayarınızı korudu” uyarısında: Ek bilgi → Yine de çalıştır.</p>
+    </div>
+    <div class="card" data-os="mac">
+      <h3><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5.5 4h13A1.5 1.5 0 0 1 20 5.5V15H4V5.5A1.5 1.5 0 0 1 5.5 4zM6 6v7h12V6H6zM2 16.5h20l-.6 1.6a1.5 1.5 0 0 1-1.4.9H4a1.5 1.5 0 0 1-1.4-.9L2 16.5z"/></svg>macOS</h3>
+      <p class="req" data-t="macReq">macOS 10.13 High Sierra ve sonrası · Intel ve Apple Silicon (M1–M4)</p>
+      <div class="btns">
+        <a class="btn primary" data-file="AllDrop-macOS.zip" href="#"><b data-t="macBtn">AllDrop.app</b><span>.zip</span></a>
+      </div>
+      <p class="note" data-t="macNote">İlk açılışta: sağ tık → Aç. macOS 15+: Sistem Ayarları → Gizlilik ve Güvenlik → Yine de Aç.</p>
+    </div>
+    <div class="card" data-os="android">
+      <h3><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v14h8V4H8zm4 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>Android</h3>
+      <p class="req" data-t="andReq">Android 5.0 ve sonrası · telefon ve tablet</p>
+      <div class="btns">
+        <a class="btn primary" data-file="AllDrop-Android.apk" data-ci="1" href="#"><b data-t="apk">Uygulama (APK)</b><span>.apk</span></a>
+      </div>
+      <p class="note" data-t="andNote">APK yüklerken “bilinmeyen uygulamalara izin ver” istenir. Kurmak istemezseniz bilgisayardaki QR kodu okutup tarayıcıdan da kullanabilirsiniz.</p>
+    </div>
+    <div class="card" data-os="ios">
+      <h3><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 2h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v14.5h14V4H5zm7 15.3a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg>iPhone · iPad</h3>
+      <p class="req" data-t="iosReq">iOS ve iPadOS 14 ve sonrası · App Store</p>
+      <div class="btns">
+        <a class="btn primary" id="appStore" href="#"><b data-t="iosBtn">App Store'da AllDrop</b><span data-t="soon">yakında</span></a>
+        <div class="btn"><b data-t="iosWeb">Ya da kurmadan: QR kodu kamerayla okutun</b></div>
+      </div>
+      <p class="note" data-t="iosNote">App Store uygulaması iPhone ve iPad'i de bir merkez yapar: diğer telefonlar ona QR ile bağlanabilir. Uygulamasız kullanımda Safari yeterlidir.</p>
+    </div>
+    <div class="card" data-os="linux">
+      <h3><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 4h15A1.5 1.5 0 0 1 21 5.5v10a1.5 1.5 0 0 1-1.5 1.5H14v2h2.5v1.5h-9V19H10v-2H4.5A1.5 1.5 0 0 1 3 15.5v-10A1.5 1.5 0 0 1 4.5 4zM5 6v9h14V6H5z"/></svg>Linux</h3>
+      <p class="req" data-t="linReq">x64 ve ARM64 (Raspberry Pi 4/5 dahil)</p>
+      <div class="btns">
+        <a class="btn" data-file="AllDrop-Linux-x64" href="#"><b>x64</b><span data-t="bin">çalıştırılabilir dosya</span></a>
+        <a class="btn" data-file="AllDrop-Linux-ARM64" href="#"><b>ARM64</b><span data-t="bin">çalıştırılabilir dosya</span></a>
+      </div>
+      <p class="note"><code>chmod +x AllDrop-Linux-x64 && ./AllDrop-Linux-x64</code></p>
+    </div>
+  </div>
+
+  <h2 data-t="how">Nasıl kullanılır?</h2>
+  <div class="steps">
+    <div class="step"><h4 data-t="s1h">Açın</h4><p data-t="s1">Bilgisayarda AllDrop'e çift tıklayın. Tarayıcınızda AllDrop ekranı açılır; aynı ağdaki diğer AllDrop'ler kendiliğinden listelenir.</p></div>
+    <div class="step"><h4 data-t="s2h">Telefonu bağlayın</h4><p data-t="s2">iPhone, iPad ya da Android ile ekrandaki QR kodu okutun. Hiçbir şey kurmadan bağlanırsınız.</p></div>
+    <div class="step"><h4 data-t="s3h">Gönderin</h4><p data-t="s3">Bir cihaza dokunun (ya da dosyaları üzerine sürükleyin). Karşı taraf “Kabul et” deyince dosyalar doğrudan aktarılır.</p></div>
+  </div>
+
+  <h2 data-t="secH">Güvenlik ve gizlilik</h2>
+  <div class="sec">
+    <div><b data-t="sec1h">Bulut yok</b><p data-t="sec1">Dosyalar hiçbir sunucuya, Google Drive'a ya da internete yüklenmez. Yalnızca yerel ağınızda dolaşır.</p></div>
+    <div><b data-t="sec2h">Şifreli</b><p data-t="sec2">Uygulamalar arası aktarım TLS ile şifrelenir. Her cihazın kimliği kendi anahtarından türetilir, başka bir cihaz onu taklit edemez.</p></div>
+    <div><b data-t="sec3h">Güvenlik kodu</b><p data-t="sec3">Her gönderimde alıcının ekranında 6 haneli bir kod çıkar; gönderen bu kodu girmeden aktarım başlamaz. Beş yanlış denemede istek iptal olur.</p></div>
+  </div>
+
+  <h2 data-t="faqH">Sık sorulanlar</h2>
+  <details><summary data-t="f1q">Cihazlar birbirini görmüyor</summary><p data-t="f1a">İki cihazın da aynı Wi-Fi ağında olduğundan emin olun (misafir ağları cihazları birbirinden ayırabilir). Windows'ta Ayarlar → “Windows Güvenlik Duvarı izni ver” düğmesini kullanın. Hâlâ görünmüyorsa Ayarlar → “IP adresiyle cihaz ekle” ile karşı cihazın adresini yazın.</p></details>
+  <details><summary data-t="f2q">Ne kadar hızlı?</summary><p data-t="f2a">Ağınızın izin verdiği en yüksek hızda. Uygulama tek başına saniyede yüzlerce MB aktarabiliyor; gerçek sınır Wi-Fi'nizdir. 5 GHz ya da Wi-Fi 6 ağlarda saniyede 30–100 MB tipiktir; kablolu bağlantı daha da hızlıdır.</p></details>
+  <details><summary data-t="f3q">Dosyalar nereye kaydedilir?</summary><p data-t="f3a">Bilgisayarda İndirilenler/AllDrop klasörüne (Ayarlar'dan değiştirilebilir). Android'de Download/AllDrop klasörüne. iPhone/iPad'de dosyaya dokunup “İndir” dediğinizde Dosyalar uygulamasına; fotoğrafları “Aç” ile açıp Fotoğraflar'a kaydedebilirsiniz.</p></details>
+  <details><summary data-t="f4q">İki iPhone arasında gönderebilir miyim?</summary><p data-t="f4a">Evet, ağda AllDrop açık bir bilgisayar ya da Android telefon olduğunda. İki iPhone da onun QR kodunu okutur ve birbirini listede görür. Aktarım yine yalnızca yerel ağ içinde olur. iPhone'lar arka planda sunucu çalıştıramadığı için bu aracı cihaz gerekir.</p></details>
+  <details><summary data-t="f5q">Neden “tanınmayan geliştirici” uyarısı çıkıyor?</summary><p data-t="f5a">Uygulama ücretli Apple/Microsoft imza sertifikalarıyla imzalanmadığı için işletim sistemi ilk açılışta bir kez sorar. Kaynak kodu açıktır; dosyaların SHA-256 değerleri SHA256SUMS.txt içindedir.</p></details>
+
+  <footer>AllDrop · <span data-t="foot">Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer</span> · <a href="privacy.html" data-t="privacy">Gizlilik</a></footer>
+</div>
+
+<script>
+// Set REPO to "owner/repository" to point the buttons at GitHub Releases.
+// On GitHub Pages it is detected automatically; otherwise files are expected in ./downloads/.
+var REPO = '';
+// Set to the App Store link once the app is live, e.g. https://apps.apple.com/app/id1234567890
+var APP_STORE = '';
+var EN = {
+  h1: 'Send files wirelessly between phones, tablets and computers',
+  sub: 'Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer. Devices on the same Wi-Fi see each other; files go straight from device to device with no cable, internet or cloud.',
+  ctaAll: 'Downloads', p1: 'No install · single file', p2: 'No cloud · local network', p3: 'TLS-encrypted', p4: '6-digit security code', p5: 'Folders and large files',
+  dl: 'Download', winReq: 'Windows 7, 8, 8.1, 10 and 11 · no installation', w64: '64-bit (most PCs)', w32: '32-bit (older PCs)',
+  winNote: 'If you see “Windows protected your PC”: More info → Run anyway.',
+  macReq: 'macOS 10.13 High Sierra and newer · Intel and Apple Silicon (M1–M4)', macBtn: 'AllDrop.app',
+  macNote: 'First launch: right-click → Open. macOS 15+: System Settings → Privacy & Security → Open Anyway.',
+  andReq: 'Android 5.0 and newer · phones and tablets', apk: 'App (APK)',
+  andNote: 'Installing the APK asks you to allow unknown apps. If you prefer not to install, scan the QR code on a computer and use it from the browser.',
+  iosReq: 'iOS and iPadOS 14 and newer · App Store', iosBtn: 'AllDrop on the App Store', soon: 'coming soon', iosWeb: 'Or without installing: scan the QR code',
+  iosNote: 'The App Store app also turns an iPhone or iPad into a hub other phones can join with the QR code. Without the app, Safari is enough.',
+  linReq: 'x64 and ARM64 (incl. Raspberry Pi 4/5)', bin: 'executable',
+  how: 'How it works', s1h: 'Open', s1: 'Double-click AllDrop on your computer. It opens in your browser and lists other AllDrop devices on the network automatically.',
+  s2h: 'Connect your phone', s2: 'Scan the QR code with an iPhone, iPad or Android. You are connected without installing anything.',
+  s3h: 'Send', s3: 'Tap a device (or drag files onto it). Once the other side taps Accept, the files go straight across.',
+  secH: 'Security and privacy', sec1h: 'No cloud', sec1: 'Files are never uploaded to a server, Google Drive or the internet. They only travel inside your local network.',
+  sec2h: 'Encrypted', sec2: 'App-to-app transfers are encrypted with TLS. Each device’s identity comes from its own key, so no other device can impersonate it.',
+  sec3h: 'Security code', sec3: 'For every transfer a 6-digit code appears on the receiver; nothing is sent until the sender types it. Five wrong tries cancel the request.',
+  faqH: 'FAQ', f1q: 'Devices do not see each other',
+  f1a: 'Make sure both are on the same Wi-Fi (guest networks may isolate devices). On Windows use Settings → “Allow through Windows Firewall”. If needed, use Settings → “Add a device by IP address”.',
+  f2q: 'How fast is it?', f2a: 'As fast as your network allows. The app itself moves hundreds of MB per second; your Wi-Fi is the real limit. 30–100 MB/s is typical on 5 GHz or Wi-Fi 6, and wired is faster still.',
+  f3q: 'Where are files saved?', f3a: 'On computers in Downloads/AllDrop (changeable in Settings). On Android in Download/AllDrop. On iPhone/iPad tap Download to save to the Files app, or Open a photo to save it to Photos.',
+  f4q: 'Can two iPhones exchange files?', f4a: 'Yes, when a computer or Android phone running AllDrop is on the network: both iPhones scan its QR code and see each other. Transfers still stay inside the local network; the helper is needed because iPhones cannot run a background server.',
+  f5q: 'Why the “unidentified developer” warning?', f5a: 'The app is not signed with paid Apple/Microsoft certificates, so the system asks once on first launch. The source code is open and SHA-256 checksums are in SHA256SUMS.txt.',
+  foot: 'Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer', privacy: 'Privacy'
+};
+var TR = {};
+var nodes = document.querySelectorAll('[data-t]');
+for (var i = 0; i < nodes.length; i++) TR[nodes[i].getAttribute('data-t')] = nodes[i].innerHTML;
+var lang = (navigator.language || 'tr').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'en';
+try { lang = localStorage.getItem('ad_site_lang') || lang; } catch (e) {}
+
+function base() {
+  if (REPO) return 'https://github.com/' + REPO + '/releases/latest/download/';
+  var h = location.hostname;
+  if (/\.github\.io$/.test(h)) {
+    var owner = h.split('.')[0];
+    var repo = location.pathname.split('/')[1] || h;
+    return 'https://github.com/' + owner + '/' + repo + '/releases/latest/download/';
+  }
+  return 'downloads/';
+}
+function detect() {
+  var ua = navigator.userAgent;
+  if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+  if (/Android/.test(ua)) return 'android';
+  if (/Windows/.test(ua)) return 'windows';
+  if (/Macintosh/.test(ua)) return 'mac';
+  if (/Linux|X11/.test(ua)) return 'linux';
+  return '';
+}
+function apply() {
+  var dict = lang === 'en' ? EN : TR;
+  for (var i = 0; i < nodes.length; i++) {
+    var k = nodes[i].getAttribute('data-t');
+    if (dict[k]) nodes[i].innerHTML = dict[k];
+  }
+  document.documentElement.lang = lang;
+  document.getElementById('lang').textContent = lang === 'en' ? 'Türkçe' : 'English';
+  var os = detect(), cta = document.getElementById('cta'), note = document.getElementById('ctaNote');
+  var labels = {
+    windows: [lang === 'en' ? 'Download for Windows' : 'Windows için indir', 'AllDrop-Windows-64bit.exe'],
+    mac: [lang === 'en' ? 'Download for Mac' : 'Mac için indir', 'AllDrop-macOS.zip'],
+    android: [lang === 'en' ? 'Download for Android' : 'Android için indir', 'AllDrop-Android.apk'],
+    linux: [lang === 'en' ? 'Download for Linux' : 'Linux için indir', 'AllDrop-Linux-x64']
+  };
+  if (labels[os]) {
+    cta.innerHTML = labels[os][0];
+    cta.href = base() + labels[os][1];
+    note.textContent = '';
+  } else if (os === 'ios') {
+    cta.innerHTML = lang === 'en' ? 'AllDrop for iPhone and iPad' : 'iPhone ve iPad için AllDrop';
+    cta.href = APP_STORE || '#indir';
+    note.textContent = APP_STORE ? '' : (lang === 'en' ? 'Coming to the App Store. Until then, scan the QR code shown by AllDrop on another device.' : 'App Store’a geliyor. O zamana kadar başka bir cihazdaki AllDrop QR kodunu okutun.');
+  }
+  var cards = document.querySelectorAll('[data-os]');
+  for (var c = 0; c < cards.length; c++) cards[c].className = 'card' + (cards[c].getAttribute('data-os') === os ? ' hl' : '');
+  var as = document.getElementById('appStore');
+  if (APP_STORE) { as.href = APP_STORE; as.querySelector('span').textContent = ''; } else { as.removeAttribute('href'); }
+  var links = document.querySelectorAll('[data-file]');
+  for (var l = 0; l < links.length; l++) links[l].href = base() + links[l].getAttribute('data-file');
+}
+document.getElementById('lang').onclick = function () {
+  lang = lang === 'en' ? 'tr' : 'en';
+  try { localStorage.setItem('ad_site_lang', lang); } catch (e) {}
+  apply();
+};
+apply();
+</script>
+</body>
+</html>

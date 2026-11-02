@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "AllDrop";
+"NSLocalNetworkUsageDescription" = "AllDrop, yakındaki cihazları bulmak ve dosyaları doğrudan yerel ağınız üzerinden göndermek için yerel ağa erişir.";
+"NSCameraUsageDescription" = "Yakındaki bir cihaza göndermek için fotoğraf veya video çekin.";
+"NSMicrophoneUsageDescription" = "Gönderdiğiniz videonun sesini kaydetmek için.";
+"NSPhotoLibraryAddUsageDescription" = "Gelen fotoğraf ve videoları arşivinize kaydetmek için.";

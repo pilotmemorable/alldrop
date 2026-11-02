@@ -1,0 +1,36 @@
+# XcodeGen spec: `brew install xcodegen && xcodegen generate` creates AllDrop.xcodeproj.
+# Build the engine first: ./build-engine.sh (needs Go and gomobile).
+name: AllDrop
+options:
+  bundleIdPrefix: com.alldrop
+  deploymentTarget:
+    iOS: "14.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  AllDrop:
+    type: application
+    platform: iOS
+    sources:
+      - path: AllDrop
+    dependencies:
+      - framework: Frameworks/Adkit.xcframework
+        embed: false
+      - sdk: libresolv.tbd
+    settings:
+      base:
+        PRODUCT_NAME: AllDrop
+        PRODUCT_BUNDLE_IDENTIFIER: com.alldrop.app
+        INFOPLIST_FILE: AllDrop/Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_BITCODE: NO
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
+        OTHER_LDFLAGS: ["-lresolv"]

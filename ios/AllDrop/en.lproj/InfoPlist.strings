@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "AllDrop";
+"NSLocalNetworkUsageDescription" = "AllDrop finds nearby devices and sends files directly over your local network.";
+"NSCameraUsageDescription" = "Take a photo or video to send to a nearby device.";
+"NSMicrophoneUsageDescription" = "Record sound for a video you send to a nearby device.";
+"NSPhotoLibraryAddUsageDescription" = "Save received photos and videos to your library.";

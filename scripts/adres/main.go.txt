@@ -1,0 +1,173 @@
+// adres builds a Windows .syso with manifest, icon and VERSIONINFO.
+package main
+
+import (
+	"bytes"
+	"encoding/binary"
+	"flag"
+	"fmt"
+	"io"
+	"os"
+	"strconv"
+	"strings"
+	"unicode/utf16"
+
+	"github.com/akavel/rsrc/binutil"
+	"github.com/akavel/rsrc/coff"
+	"github.com/akavel/rsrc/ico"
+	"github.com/akavel/rsrc/internal"
+)
+
+type grpDir struct {
+	ico.ICONDIR
+	Entries []grpEntry
+}
+
+func (g grpDir) Size() int64 {
+	return int64(binary.Size(g.ICONDIR) + len(g.Entries)*binary.Size(g.Entries[0]))
+}
+
+type grpEntry struct {
+	ico.IconDirEntryCommon
+	Id uint16
+}
+
+type vnode struct {
+	key      string
+	text     string
+	bin      []byte
+	isText   bool
+	children []vnode
+}
+
+func u16(s string) []byte {
+	var b bytes.Buffer
+	for _, c := range utf16.Encode([]rune(s)) {
+		binary.Write(&b, binary.LittleEndian, c)
+	}
+	b.Write([]byte{0, 0})
+	return b.Bytes()
+}
+
+func pad4(b *bytes.Buffer) {
+	for b.Len()%4 != 0 {
+		b.WriteByte(0)
+	}
+}
+
+func (n vnode) encode() []byte {
+	var b bytes.Buffer
+	b.Write(make([]byte, 6))
+	b.Write(u16(n.key))
+	pad4(&b)
+	var valLen uint16
+	typ := uint16(0)
+	if n.isText {
+		typ = 1
+		if n.text != "" || len(n.children) == 0 {
+			v := u16(n.text)
+			b.Write(v)
+			valLen = uint16(len(v) / 2)
+		}
+	} else if n.bin != nil {
+		b.Write(n.bin)
+		valLen = uint16(len(n.bin))
+	}
+	for _, c := range n.children {
+		pad4(&b)
+		b.Write(c.encode())
+	}
+	out := b.Bytes()
+	binary.LittleEndian.PutUint16(out[0:], uint16(len(out)))
+	binary.LittleEndian.PutUint16(out[2:], valLen)
+	binary.LittleEndian.PutUint16(out[4:], typ)
+	return out
+}
+
+func versionInfo(ver string, kv [][2]string) []byte {
+	p := strings.Split(ver, ".")
+	for len(p) < 4 {
+		p = append(p, "0")
+	}
+	n := make([]uint32, 4)
+	for i := 0; i < 4; i++ {
+		x, _ := strconv.Atoi(p[i])
+		n[i] = uint32(x)
+	}
+	var fixed bytes.Buffer
+	for _, v := range []uint32{0xFEEF04BD, 0x00010000, n[0]<<16 | n[1], n[2]<<16 | n[3], n[0]<<16 | n[1], n[2]<<16 | n[3], 0x3F, 0, 0x40004, 1, 0, 0, 0} {
+		binary.Write(&fixed, binary.LittleEndian, v)
+	}
+	var strs []vnode
+	for _, x := range kv {
+		strs = append(strs, vnode{key: x[0], text: x[1], isText: true})
+	}
+	root := vnode{key: "VS_VERSION_INFO", bin: fixed.Bytes(), children: []vnode{
+		{key: "StringFileInfo", isText: true, children: []vnode{{key: "040904B0", isText: true, children: strs}}},
+		{key: "VarFileInfo", isText: true, children: []vnode{{key: "Translation", bin: []byte{0x09, 0x04, 0xB0, 0x04}}}},
+	}}
+	return root.encode()
+}
+
+func main() {
+	arch := flag.String("arch", "amd64", "")
+	manifest := flag.String("manifest", "", "")
+	icon := flag.String("ico", "", "")
+	out := flag.String("o", "", "")
+	ver := flag.String("version", "1.0.0.0", "")
+	product := flag.String("product", "", "")
+	desc := flag.String("desc", "", "")
+	comments := flag.String("comments", "", "")
+	company := flag.String("company", "", "")
+	original := flag.String("original", "", "")
+	flag.Parse()
+
+	id := uint16(0)
+	newid := func() uint16 { id++; return id }
+	c := coff.NewRSRC()
+	if err := c.Arch(*arch); err != nil {
+		panic(err)
+	}
+	m, err := binutil.SizedOpen(*manifest)
+	if err != nil {
+		panic(err)
+	}
+	defer m.Close()
+	c.AddResource(coff.RT_MANIFEST, newid(), m)
+
+	f, err := os.Open(*icon)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	icons, err := ico.DecodeHeaders(f)
+	if err != nil {
+		panic(err)
+	}
+	group := grpDir{ICONDIR: ico.ICONDIR{Reserved: 0, Type: 1, Count: uint16(len(icons))}}
+	gid := newid()
+	for _, ic := range icons {
+		iid := newid()
+		c.AddResource(coff.RT_ICON, iid, io.NewSectionReader(f, int64(ic.ImageOffset), int64(ic.BytesInRes)))
+		group.Entries = append(group.Entries, grpEntry{ic.IconDirEntryCommon, iid})
+	}
+	c.AddResource(coff.RT_GROUP_ICON, gid, group)
+
+	vi := versionInfo(*ver, [][2]string{
+		{"CompanyName", *company},
+		{"FileDescription", *desc},
+		{"FileVersion", *ver},
+		{"InternalName", "AllDrop"},
+		{"LegalCopyright", "AllDrop"},
+		{"OriginalFilename", *original},
+		{"ProductName", *product},
+		{"ProductVersion", *ver},
+		{"Comments", *comments},
+	})
+	c.AddResource(16, 1, bytes.NewReader(vi)) // RT_VERSION
+	c.Freeze()
+	if err := internal.Write(c, *out); err != nil {
+		panic(err)
+	}
+	fmt.Println("wrote", *out)
+}

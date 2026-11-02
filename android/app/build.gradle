@@ -1,0 +1,56 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Release signing: set these environment variables (or gradle properties) to
+// sign with your own key. Without them the release APK is signed with the
+// debug key, which is fine for installing directly on phones.
+def ks = System.getenv('AD_KEYSTORE') ?: project.findProperty('AD_KEYSTORE')
+
+android {
+    namespace 'app.alldrop.android'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.alldrop.android'
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv('AD_KEYSTORE_PASSWORD') ?: project.findProperty('AD_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('AD_KEY_ALIAS') ?: project.findProperty('AD_KEY_ALIAS')
+                keyPassword System.getenv('AD_KEY_PASSWORD') ?: project.findProperty('AD_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig ks ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    // The Go engine ships as lib*.so so Android extracts it to an executable location.
+    packaging {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}

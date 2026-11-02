@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AllDrop</string>
+    <string name="ch_service">Running in background</string>
+    <string name="ch_offers">Incoming files</string>
+    <string name="running_title">AllDrop is on</string>
+    <string name="running_text">Nearby devices can send you files.</string>
+    <string name="stop">Turn off</string>
+    <string name="offer_title">%1$s wants to send you files</string>
+    <string name="offer_text">%1$s file(s) · tap to review</string>
+    <string name="starting">Starting…</string>
+    <string name="engine_failed">The transfer engine could not start on this device.</string>
+    <string name="no_viewer">No app found to open this file.</string>
+    <string name="shared_ready">%1$d file(s) ready – pick a device</string>
+    <string name="offer_code">%1$s file(s) · code %2$s</string>
+</resources>
