@@ -1,0 +1,138 @@
+# Builds every AllDrop download (Windows, macOS, Linux, Android APK) and
+# publishes them as a GitHub Release when a tag like v1.0.0 is pushed.
+# Run it by hand from the Actions tab to just get the files as artifacts.
+name: Build and release
+
+on:
+  push:
+    tags: ['v*']
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GO_VERSION: '1.20.14'   # last Go that supports Windows 7/8 and macOS 10.13+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Unit tests
+        run: GOFLAGS=-mod=mod GOPROXY=off GOSUMDB=off go test ./...
+      - name: Build Windows, Linux and the Android engine
+        run: |
+          V="${GITHUB_REF_NAME#v}"; [ "${GITHUB_REF_TYPE}" = tag ] || V=1.0.0
+          VERSION="$V" bash ./build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop
+          path: |
+            dist/*.exe
+            dist/AllDrop-Linux-*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jnilibs
+          path: android/app/src/main/jniLibs
+
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Build universal AllDrop.app
+        run: |
+          V="${GITHUB_REF_NAME#v}"; [ "${GITHUB_REF_TYPE}" = tag ] || V=1.0.0
+          export CGO_ENABLED=0 GOFLAGS=-mod=mod GOPROXY=off GOSUMDB=off
+          mkdir -p build/mac dist
+          GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o build/mac/alldrop-amd64 .
+          GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o build/mac/alldrop-arm64 .
+          python3 scripts/macpkg.py build/mac/alldrop-amd64 build/mac/alldrop-arm64 assets/mac-1024.png build/mac "$V"
+          codesign --force --deep --sign - build/mac/AllDrop.app
+          codesign --verify --deep --strict build/mac/AllDrop.app
+          lipo -info build/mac/AllDrop.app/Contents/MacOS/AllDrop
+          cp packaging/macos-first-run.txt "build/mac/macOS - ilk acilis (first run).txt"
+          (cd build/mac && ditto -c -k --sequesterRsrc --keepParent AllDrop.app ../../dist/app.zip)
+          (cd build/mac && rm -f ../../dist/AllDrop-macOS.zip && zip -qry ../../dist/AllDrop-macOS.zip AllDrop.app "macOS - ilk acilis (first run).txt")
+          mkdir -p build/dmg && cp -R build/mac/AllDrop.app build/dmg/ && cp "build/mac/macOS - ilk acilis (first run).txt" build/dmg/
+          ln -s /Applications build/dmg/Applications
+          hdiutil create -volname AllDrop -srcfolder build/dmg -ov -format UDZO dist/AllDrop-macOS.dmg
+          rm dist/app.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/*
+
+  android:
+    needs: desktop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: jnilibs
+          path: android/app/src/main/jniLibs
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Optional release key (repository secrets)
+        env:
+          KEYSTORE_B64: ${{ secrets.AD_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "AD_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          fi
+      - name: Build APK
+        env:
+          AD_KEYSTORE_PASSWORD: ${{ secrets.AD_KEYSTORE_PASSWORD }}
+          AD_KEY_ALIAS: ${{ secrets.AD_KEY_ALIAS }}
+          AD_KEY_PASSWORD: ${{ secrets.AD_KEY_PASSWORD }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+          mkdir -p ../dist
+          cp app/build/outputs/apk/release/*.apk ../dist/AllDrop-Android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: dist/AllDrop-Android.apk
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: [desktop, macos, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - run: cd out && sha256sum * > SHA256SUMS.txt && ls -la
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: out/*
+          generate_release_notes: true
