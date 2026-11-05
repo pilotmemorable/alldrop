@@ -15,7 +15,7 @@ Windows, Mac, Linux, Android, iPhone ve iPad arasında kablosuz dosya paylaşım
 | **Platformlar** | Windows 7 · 8 · 8.1 · 10 · 11 (32/64 bit, ARM64), macOS 10.13+ (Intel ve Apple Silicon), Linux, Android 5+, iPhone/iPad (App Store uygulaması ya da tarayıcı) |
 | **Güvenlik kodu (OTP)** | Her gönderimde **alıcının ekranında 6 haneli bir kod** çıkar. Gönderen kodu girmeden aktarım başlamaz. 5 yanlış denemede istek iptal olur. Alıcı "Bu cihaza güven" derse o cihazdan bir dahaki sefere kod sorulmaz. Ayarlardan kapatılabilir. |
 | **Gizlilik** | Dosyalar hiçbir sunucuya, Google Drive'a ya da internete gitmez. |
-| **Şifreleme** | Uygulamalar arası trafik karşılıklı TLS ile şifrelenir. Cihaz kimliği her cihazın kendi anahtarından türetilir. |
+| **Şifreleme** | Uygulamalar arası trafik uçtan uca, karşılıklı TLS ile şifrelenir. Cihaz kimliği her cihazın kendi anahtarından türetilir. |
 | **Kurulum** | Bilgisayarda kurulum yok, tek dosyaya çift tıklanır. Uygulaması olmayan cihazlar QR kodu okutup tarayıcıdan bağlanır. |
 | **Hız** | Ağınızın izin verdiği en yüksek hız. Aynı makinedeki testte şifreli bağlantı üzerinden saniyede yaklaşık 300 MB ölçüldü; gerçek sınır Wi-Fi'nizdir. |
 | **Ekstralar** | Klasör ve çoklu dosya, sürükle-bırak, Windows'ta sağ tık → Gönder → AllDrop, Android ve iOS'ta **Paylaş** menüsü, ZIP ile toplu indirme, Türkçe/İngilizce arayüz, açık/koyu tema. |
@@ -86,7 +86,7 @@ GitHub'a gönderip `v1.0.0` gibi bir etiket oluşturduğunuzda tüm dosyalar der
 **AllDrop: All Device** sends files between Windows, Mac, Linux, Android, iPhone and iPad over your local network, with no cable, internet or cloud.
 
 - **Security code:** each transfer shows a 6-digit code on the receiver. The sender must type it before anything is sent; 5 wrong tries cancel the request. Trusted devices can skip the code.
-- App-to-app traffic uses mutually authenticated TLS; a device's ID is the hash of its own certificate.
+- App-to-app traffic is end-to-end encrypted with mutually authenticated TLS; a device's ID is the hash of its own certificate.
 - Windows 7–11 (x86/x64/ARM64), macOS 10.13+ (universal), Linux, Android 5+, iOS/iPadOS 15+ (App Store). Devices without the app join from the browser via QR code.
 - Ports: UDP 45453 (discovery), TCP 45454 (web UI / browser guests), TCP 45455 (encrypted app-to-app).
 

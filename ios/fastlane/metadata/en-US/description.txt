@@ -8,8 +8,8 @@ Your files are never uploaded to the internet or to any server. They travel dire
 SECURITY CODE
 For every transfer a 6-digit code appears on the receiver's screen. Nothing is sent until the sender types it. You can skip the code for devices you trust.
 
-ENCRYPTED
-Transfers between AllDrop apps are encrypted with TLS. Each device's identity comes from its own key.
+END-TO-END ENCRYPTED
+Data transfers between AllDrop apps are end-to-end encrypted with mutually authenticated TLS. Each device's identity comes from its own key, so no other device can read or impersonate it.
 
 WORKS WITH EVERY DEVICE
 • Free AllDrop apps for Windows 7, 8, 10 and 11, macOS, Linux and Android

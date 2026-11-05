@@ -78,7 +78,7 @@ footer { color: var(--muted); font-size: 13.5px; text-align: center; padding: 40
     <div class="pills">
       <span class="pill" data-t="p1">Kurulum yok · tek dosya</span>
       <span class="pill" data-t="p2">Bulut yok · yerel ağ</span>
-      <span class="pill" data-t="p3">TLS şifreli</span>
+      <span class="pill" data-t="p3">Uçtan uca şifreli</span>
       <span class="pill" data-t="p4">6 haneli güvenlik kodu</span>
       <span class="pill" data-t="p5">Klasör ve büyük dosya</span>
     </div>
@@ -142,7 +142,7 @@ footer { color: var(--muted); font-size: 13.5px; text-align: center; padding: 40
   <h2 data-t="secH">Güvenlik ve gizlilik</h2>
   <div class="sec">
     <div><b data-t="sec1h">Bulut yok</b><p data-t="sec1">Dosyalar hiçbir sunucuya, Google Drive'a ya da internete yüklenmez. Yalnızca yerel ağınızda dolaşır.</p></div>
-    <div><b data-t="sec2h">Şifreli</b><p data-t="sec2">Uygulamalar arası aktarım TLS ile şifrelenir. Her cihazın kimliği kendi anahtarından türetilir, başka bir cihaz onu taklit edemez.</p></div>
+    <div><b data-t="sec2h">Uçtan uca şifreli</b><p data-t="sec2">Uygulamalar arası veri aktarımı uçtan uca, karşılıklı TLS ile şifrelenir. Her cihazın kimliği kendi anahtarından türetilir; başka hiçbir cihaz onu okuyamaz ya da taklit edemez.</p></div>
     <div><b data-t="sec3h">Güvenlik kodu</b><p data-t="sec3">Her gönderimde alıcının ekranında 6 haneli bir kod çıkar; gönderen bu kodu girmeden aktarım başlamaz. Beş yanlış denemede istek iptal olur.</p></div>
   </div>
 
@@ -165,7 +165,7 @@ var APP_STORE = '';
 var EN = {
   h1: 'Send files wirelessly between phones, tablets and computers',
   sub: 'Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer. Devices on the same Wi-Fi see each other; files go straight from device to device with no cable, internet or cloud.',
-  ctaAll: 'Downloads', p1: 'No install · single file', p2: 'No cloud · local network', p3: 'TLS-encrypted', p4: '6-digit security code', p5: 'Folders and large files',
+  ctaAll: 'Downloads', p1: 'No install · single file', p2: 'No cloud · local network', p3: 'End-to-end encrypted', p4: '6-digit security code', p5: 'Folders and large files',
   dl: 'Download', winReq: 'Windows 7, 8, 8.1, 10 and 11 · no installation', w64: '64-bit (most PCs)', w32: '32-bit (older PCs)',
   winNote: 'If you see “Windows protected your PC”: More info → Run anyway.',
   macReq: 'macOS 10.13 High Sierra and newer · Intel and Apple Silicon (M1–M4)', macBtn: 'AllDrop.app',
@@ -179,7 +179,7 @@ var EN = {
   s2h: 'Connect your phone', s2: 'Scan the QR code with an iPhone, iPad or Android. You are connected without installing anything.',
   s3h: 'Send', s3: 'Tap a device (or drag files onto it). Once the other side taps Accept, the files go straight across.',
   secH: 'Security and privacy', sec1h: 'No cloud', sec1: 'Files are never uploaded to a server, Google Drive or the internet. They only travel inside your local network.',
-  sec2h: 'Encrypted', sec2: 'App-to-app transfers are encrypted with TLS. Each device’s identity comes from its own key, so no other device can impersonate it.',
+  sec2h: 'End-to-end encrypted', sec2: 'App-to-app data transfers are end-to-end encrypted with mutually authenticated TLS. Each device’s identity comes from its own key, so no other device can read or impersonate it.',
   sec3h: 'Security code', sec3: 'For every transfer a 6-digit code appears on the receiver; nothing is sent until the sender types it. Five wrong tries cancel the request.',
   faqH: 'FAQ', f1q: 'Devices do not see each other',
   f1a: 'Make sure both are on the same Wi-Fi (guest networks may isolate devices). On Windows use Settings → “Allow through Windows Firewall”. If needed, use Settings → “Add a device by IP address”.',
