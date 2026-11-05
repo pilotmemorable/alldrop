@@ -6,15 +6,19 @@ name: Build and release
 on:
   push:
     tags: ['v*']
-  release:
-    types: [published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Upload the files to this release tag (e.g. v1.0.0). Leave empty to only build.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
 
 env:
   GO_VERSION: '1.20.14'   # last Go that supports Windows 7/8 and macOS 10.13+
+  RELEASE_TAG: ${{ github.event.inputs.tag || (github.ref_type == 'tag' && github.ref_name) || '' }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -37,7 +41,7 @@ jobs:
         run: GOFLAGS=-mod=mod GOPROXY=off GOSUMDB=off go test ./...
       - name: Build Windows, Linux and the Android engine
         run: |
-          V="${GITHUB_REF_NAME#v}"; [ "${GITHUB_REF_TYPE}" = tag ] || V=1.0.0
+          V="${RELEASE_TAG#v}"; [ -n "$V" ] || V=1.0.0
           VERSION="$V" bash ./build.sh
       - uses: actions/upload-artifact@v4
         with:
@@ -64,7 +68,7 @@ jobs:
       - run: pip install pillow
       - name: Build universal AllDrop.app
         run: |
-          V="${GITHUB_REF_NAME#v}"; [ "${GITHUB_REF_TYPE}" = tag ] || V=1.0.0
+          V="${RELEASE_TAG#v}"; [ -n "$V" ] || V=1.0.0
           export CGO_ENABLED=0 GOFLAGS=-mod=mod GOPROXY=off GOSUMDB=off
           mkdir -p build/mac dist
           GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o build/mac/alldrop-amd64 .
@@ -123,7 +127,7 @@ jobs:
           path: dist/AllDrop-Android.apk
 
   release:
-    if: github.ref_type == 'tag'
+    if: github.ref_type == 'tag' || github.event.inputs.tag
     needs: [desktop, macos, android]
     runs-on: ubuntu-latest
     steps:
@@ -131,8 +135,15 @@ jobs:
         with:
           path: out
           merge-multiple: true
-      - run: cd out && sha256sum * > SHA256SUMS.txt && ls -la
+      - name: Checksums
+        run: |
+          cd out
+          # the jnilibs artifact (Android engine) is only an APK input: drop its folders
+          find . -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
+          sha256sum * > SHA256SUMS.txt
+          ls -la
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
           files: out/*
           generate_release_notes: true

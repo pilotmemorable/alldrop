@@ -84,7 +84,7 @@ TestFlight'ta derleme göründükten sonra (10–30 dk) sürüm sayfasında derl
 
 ## Teknik notlar
 
-- En düşük sürüm: iOS/iPadOS 14. Apple Silicon Mac'lerde de çalışır (*Designed for iPad*).
+- En düşük sürüm: iOS/iPadOS 15. Apple Silicon Mac'lerde de çalışır (*Designed for iPad*).
 - Alınan dosyalar: Dosyalar uygulaması → iPhone'umda → AllDrop.
 - Başka uygulamalardan **Paylaş → AllDrop** ile gelen dosyalar gönderim listesine eklenir.
 - iPhone'lar yayın (broadcast) paketi gönderemediğinden uygulama ağı 40 sn'de bir tarar ve bulduğu cihazlara kendini tanıtır.

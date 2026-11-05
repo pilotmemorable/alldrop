@@ -87,7 +87,7 @@ GitHub'a gönderip `v1.0.0` gibi bir etiket oluşturduğunuzda tüm dosyalar der
 
 - **Security code:** each transfer shows a 6-digit code on the receiver. The sender must type it before anything is sent; 5 wrong tries cancel the request. Trusted devices can skip the code.
 - App-to-app traffic uses mutually authenticated TLS; a device's ID is the hash of its own certificate.
-- Windows 7–11 (x86/x64/ARM64), macOS 10.13+ (universal), Linux, Android 5+, iOS/iPadOS 14+ (App Store). Devices without the app join from the browser via QR code.
+- Windows 7–11 (x86/x64/ARM64), macOS 10.13+ (universal), Linux, Android 5+, iOS/iPadOS 15+ (App Store). Devices without the app join from the browser via QR code.
 - Ports: UDP 45453 (discovery), TCP 45454 (web UI / browser guests), TCP 45455 (encrypted app-to-app).
 
 Third-party code: [go-qrcode](https://github.com/skip2/go-qrcode) (MIT) in `third_party/`.
