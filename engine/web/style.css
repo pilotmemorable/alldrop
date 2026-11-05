@@ -223,3 +223,8 @@ input[type=text] {
   .otp { color: #5aa9ff; }
   .err { color: #ff7b80 !important; }
 }
+
+.lang-sel{height:34px;border:1px solid #d7dce5;border-radius:10px;background:#fff;color:inherit;font:inherit;font-size:13px;padding:0 6px;cursor:pointer;-webkit-appearance:none;appearance:none}
+@media (prefers-color-scheme: dark){.lang-sel{background:#1d222b;border-color:#2c333f;color:#e7ebf0}}
+[dir="rtl"] .top-actions{flex-direction:row-reverse}
+[dir="rtl"] .inline{flex-direction:row-reverse}
