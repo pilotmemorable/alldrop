@@ -1,0 +1,23 @@
+AllDrop ile iPhone, iPad, Mac, Windows ve Android cihazlarınız arasında kablosuz, hızlı ve güvenli dosya gönderin.
+
+Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer
+
+BULUT YOK
+Dosyalarınız internete ya da herhangi bir sunucuya yüklenmez. Aynı Wi-Fi ağındaki cihazlar arasında doğrudan gider.
+
+GÜVENLİK KODU
+Her gönderimde alıcının ekranında 6 haneli bir kod belirir. Gönderen bu kodu girmeden aktarım başlamaz. Güvendiğiniz cihazlar için kodu kapatabilirsiniz.
+
+ŞİFRELİ
+AllDrop uygulamaları arasındaki aktarım TLS ile şifrelenir. Her cihazın kimliği kendi anahtarından türetilir.
+
+HER CİHAZLA
+• Windows 7, 8, 10 ve 11, macOS, Linux ve Android için ücretsiz AllDrop uygulamaları
+• Uygulaması olmayan cihazlar QR kodu okutarak tarayıcıdan bağlanır
+• Fotoğraf, video, belge, birden çok dosya; boyut sınırı yok
+• Başka uygulamalardan "Paylaş" ile AllDrop'a gönderin
+• Alınan dosyalar Dosyalar uygulamasındaki "AllDrop" klasöründe
+
+Hesap, kayıt ve reklam yok. Hiçbir veri toplanmaz.
+
+Not: Dosya alırken AllDrop açık olmalı ve cihazlar aynı Wi-Fi ağında bulunmalıdır.

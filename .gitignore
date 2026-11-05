@@ -10,7 +10,6 @@ android/local.properties
 ios/AllDrop.xcodeproj/
 ios/Frameworks/
 *.xcarchive
-# Kept in the AIRDROP folder instead: icon sources, App Store texts and screenshots
+# Icon sources are kept in the AIRDROP folder
 assets/*
 !assets/mac-1024.png
-ios/fastlane/

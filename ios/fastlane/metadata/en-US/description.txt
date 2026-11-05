@@ -1,0 +1,23 @@
+Send files between your iPhone, iPad, Mac, Windows PC and Android devices: wireless, fast and private.
+
+Mac to Windows · Win to Mac · iOS to Android · Android to iOS · All Devices All Transfer
+
+NO CLOUD
+Your files are never uploaded to the internet or to any server. They travel directly between devices on the same Wi-Fi network.
+
+SECURITY CODE
+For every transfer a 6-digit code appears on the receiver's screen. Nothing is sent until the sender types it. You can skip the code for devices you trust.
+
+ENCRYPTED
+Transfers between AllDrop apps are encrypted with TLS. Each device's identity comes from its own key.
+
+WORKS WITH EVERY DEVICE
+• Free AllDrop apps for Windows 7, 8, 10 and 11, macOS, Linux and Android
+• Devices without the app join from the browser by scanning a QR code
+• Photos, videos, documents, many files at once, no size limit
+• Send to AllDrop from other apps with Share
+• Received files are in the "AllDrop" folder of the Files app
+
+No account, no sign-up, no ads. No data is collected.
+
+Note: keep AllDrop open while receiving, and keep both devices on the same Wi-Fi network.

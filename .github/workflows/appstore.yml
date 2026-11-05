@@ -1,0 +1,50 @@
+# Uploads the App Store page to App Store Connect: texts from
+# ios/fastlane/metadata (tr + en-US) and screenshots from ios/fastlane/screenshots.
+# It does NOT submit the app for review. Uses the same secrets as ios.yml
+# (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8) and the IOS_BUNDLE_ID variable.
+name: App Store listing
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'App Store version (e.g. 1.0.0)'
+        required: false
+        default: '1.0.0'
+
+jobs:
+  listing:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID || 'com.alldrop.app' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - name: Install fastlane
+        run: gem install fastlane -N
+      - name: Upload texts and screenshots
+        env:
+          ASC_KEY_ID: ${{ vars.ASC_KEY_ID || secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID || secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          VERSION: ${{ github.event.inputs.version || '1.0.0' }}
+        run: |
+          if [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$ASC_KEY_P8" ]; then
+            echo "::error::App Store Connect API key secrets are not set"; exit 1
+          fi
+          python3 -c 'import json,os; json.dump({"key_id":os.environ["ASC_KEY_ID"],"issuer_id":os.environ["ASC_ISSUER_ID"],"key":os.environ["ASC_KEY_P8"],"in_house":False}, open(os.environ["RUNNER_TEMP"]+"/asc.json","w"))'
+          fastlane deliver \
+            --api_key_path "$RUNNER_TEMP/asc.json" \
+            --platform ios \
+            --app_identifier "$BUNDLE_ID" \
+            --app_version "$VERSION" \
+            --skip_binary_upload true \
+            --metadata_path ios/fastlane/metadata \
+            --screenshots_path ios/fastlane/screenshots \
+            --overwrite_screenshots true \
+            --submit_for_review false \
+            --automatic_release false \
+            --run_precheck_before_submit false \
+            --force true

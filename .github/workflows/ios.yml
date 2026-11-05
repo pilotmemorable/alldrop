@@ -2,13 +2,14 @@
 # compiles (simulator). With the secrets below it signs the app and uploads
 # it to App Store Connect (TestFlight), ready to submit for review.
 #
-# Repository secrets (Settings > Secrets and variables > Actions):
+# Repository variables (Settings > Secrets and variables > Actions > Variables):
 #   APPLE_TEAM_ID      10-character Team ID (developer.apple.com > Membership)
-#   ASC_KEY_ID         App Store Connect API key ID (Users and Access > Integrations > Keys, role "App Manager")
+#   ASC_KEY_ID         App Store Connect API key ID (Users and Access > Integrations, role "App Manager")
 #   ASC_ISSUER_ID      Issuer ID shown on the same page
-#   ASC_KEY_P8         contents of the downloaded AuthKey_XXXX.p8 file
-# Repository variable (optional):
 #   IOS_BUNDLE_ID      e.g. com.yourname.alldrop (default com.alldrop.app)
+# Repository secret (Settings > Secrets and variables > Actions > Secrets):
+#   ASC_KEY_P8         full contents of the downloaded AuthKey_XXXX.p8 file
+# (The three IDs may also be stored as secrets instead of variables.)
 name: iOS app
 
 on:
@@ -60,9 +61,9 @@ jobs:
           tail -20 "$RUNNER_TEMP/build.log"
       - name: Archive and upload to App Store Connect
         env:
-          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          ASC_KEY_ID: ${{ vars.ASC_KEY_ID || secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID || secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
         run: |
           if [ -z "$TEAM_ID" ] || [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_KEY_P8" ]; then
