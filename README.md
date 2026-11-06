@@ -20,19 +20,22 @@ Windows, Mac, Linux, Android, iPhone ve iPad arasında kablosuz dosya paylaşım
 | **Hız** | Ağınızın izin verdiği en yüksek hız. Aynı makinedeki testte şifreli bağlantı üzerinden saniyede yaklaşık 300 MB ölçüldü; gerçek sınır Wi-Fi'nizdir. |
 | **Ekstralar** | Klasör ve çoklu dosya, sürükle-bırak, Windows'ta sağ tık → Gönder → AllDrop, Android ve iOS'ta **Paylaş** menüsü, ZIP ile toplu indirme, Türkçe/İngilizce arayüz, açık/koyu tema. |
 
-## İndirilecek dosyalar
+## ⬇️ İndir (tüm platformlar)
 
-| Platform | Dosya |
+Her bağlantı **en son sürümü** indirir. Tüm sürümler: [Releases »](https://github.com/pilotmemorable/alldrop/releases/latest)
+
+| Platform | İndir |
 |---|---|
-| Windows 64 bit (çoğu bilgisayar) | `AllDrop-Windows-64bit.exe` |
-| Windows 32 bit | `AllDrop-Windows-32bit.exe` |
-| Windows ARM | `AllDrop-Windows-ARM64.exe` |
-| macOS | `AllDrop-macOS.zip` (içinde `AllDrop.app`) |
-| Linux | `AllDrop-Linux-x64`, `AllDrop-Linux-ARM64` |
-| Android | `AllDrop-Android.apk` (GitHub Actions derler) |
-| iPhone / iPad | App Store: **AllDrop: All Device** (`ios/APP-STORE-REHBERI.md`) |
+| 🪟 **Windows 10 / 11 (64 bit)** — çoğu bilgisayar | [⬇ AllDrop-Windows-64bit.exe](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Windows-64bit.exe) |
+| 🪟 Windows 7 / 8 / 10 (32 bit) | [⬇ AllDrop-Windows-32bit.exe](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Windows-32bit.exe) |
+| 🪟 Windows ARM64 | [⬇ AllDrop-Windows-ARM64.exe](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Windows-ARM64.exe) |
+| 🍎 **macOS** (Intel + Apple Silicon) | [⬇ AllDrop-macOS.dmg](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-macOS.dmg) · [.zip](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-macOS.zip) |
+| 🐧 **Linux** (x64) | [⬇ AllDrop-Linux-x64](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Linux-x64) |
+| 🐧 Linux (ARM64) | [⬇ AllDrop-Linux-ARM64](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Linux-ARM64) |
+| 🤖 **Android** | [⬇ AllDrop-Android.apk](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Android.apk) |
+| 📱 **iPhone / iPad** | [App Store'da aç »](https://apps.apple.com/app/id6830793977) |
 
-Windows .exe dosyalarının *Özellikler → Ayrıntılar* sekmesinde ürün adı **AllDrop: All Device**, açıklama ve sürüm bilgisi görünür.
+Dosya bütünlüğünü doğrulamak için: [SHA256SUMS.txt](https://github.com/pilotmemorable/alldrop/releases/latest/download/SHA256SUMS.txt). Windows .exe dosyalarının *Özellikler → Ayrıntılar* sekmesinde ürün adı **AllDrop: All Device** görünür.
 
 ## Kullanım
 
@@ -89,5 +92,21 @@ GitHub'a gönderip `v1.0.0` gibi bir etiket oluşturduğunuzda tüm dosyalar der
 - App-to-app traffic is end-to-end encrypted with mutually authenticated TLS; a device's ID is the hash of its own certificate.
 - Windows 7–11 (x86/x64/ARM64), macOS 10.13+ (universal), Linux, Android 5+, iOS/iPadOS 15+ (App Store). Devices without the app join from the browser via QR code.
 - Ports: UDP 45453 (discovery), TCP 45454 (web UI / browser guests), TCP 45455 (encrypted app-to-app).
+
+### ⬇️ Download (latest release)
+
+[Windows 64-bit](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Windows-64bit.exe) ·
+[Windows 32-bit](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Windows-32bit.exe) ·
+[Windows ARM64](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Windows-ARM64.exe) ·
+[macOS (.dmg)](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-macOS.dmg) ·
+[Linux x64](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Linux-x64) ·
+[Linux ARM64](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Linux-ARM64) ·
+[Android APK](https://github.com/pilotmemorable/alldrop/releases/latest/download/AllDrop-Android.apk) ·
+[iPhone / iPad (App Store)](https://apps.apple.com/app/id6830793977) ·
+[All releases](https://github.com/pilotmemorable/alldrop/releases/latest)
+
+## Security
+
+AllDrop is built privacy-first and has an in-repo threat model and automated attack-test suite. See [SECURITY.md](SECURITY.md). Highlights: mutually-authenticated TLS with certificate pinning between devices, a crypto-random 6-digit transfer code (constant-time compare, 5-try lockout), path-traversal-safe file writing, and CSRF / DNS-rebind protection on the local web UI. Run the security tests with `go test ./engine/ -run Attack -v`.
 
 Third-party code: [go-qrcode](https://github.com/skip2/go-qrcode) (MIT) in `third_party/`.

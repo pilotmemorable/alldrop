@@ -228,3 +228,7 @@ input[type=text] {
 @media (prefers-color-scheme: dark){.lang-sel{background:#1d222b;border-color:#2c333f;color:#e7ebf0}}
 [dir="rtl"] .top-actions{flex-direction:row-reverse}
 [dir="rtl"] .inline{flex-direction:row-reverse}
+
+/* Download-the-apps link in the footer */
+.get-apps { color: var(--accent, #0a7cff); text-decoration: none; font-weight: 600; }
+.get-apps:hover { text-decoration: underline; }
