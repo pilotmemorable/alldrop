@@ -232,3 +232,18 @@ input[type=text] {
 /* Download-the-apps link in the footer */
 .get-apps { color: var(--accent, #0a7cff); text-decoration: none; font-weight: 600; }
 .get-apps:hover { text-decoration: underline; }
+
+/* Get-the-app-on-other-devices panel */
+.dl-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.dl-row { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink, #12161c);
+  border: 1px solid var(--line, #e2e6ee); border-radius: 12px; padding: 10px 14px; }
+.dl-row:hover { border-color: var(--accent, #0a7cff); }
+.dl-ic { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  color: var(--accent, #0a7cff); flex-shrink: 0; }
+.dl-ic svg { width: 22px; height: 22px; }
+.dl-tx { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.dl-tx b { font-size: 15px; }
+.dl-tx small { color: var(--muted, #5b6573); font-size: 12.5px; }
+.dl-go { color: var(--muted, #8a919c); font-weight: 700; font-size: 18px; }
+.dl-page { margin: 4px 0 2px; word-break: break-all; }
+.dl-page code { font-size: 12.5px; }

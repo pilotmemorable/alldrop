@@ -50,7 +50,14 @@
       receivedN: '{n} dosya alındı', sentOk: '{name} cihazına gönderildi',
       fwOk: 'Açılan pencerede Evet’e tıklayın.', sendtoOk: 'Eklendi: dosyaya sağ tıklayın → Gönder → AllDrop',
       secure: 'Uçtan uca şifreli aktarım (karşılıklı TLS) · Dosyalar yerel ağınızdan dışarı çıkmaz',
-      getApps: "Diğer cihazların için AllDrop'u indir",
+      getApps: "Diğer cihazlara AllDrop gönder / indir",
+      getAppsTitle: 'Diğer cihazlara AllDrop',
+      getAppsSub: 'Bu linkleri herhangi bir cihazda açıp indirin veya paylaşın. Her zaman en güncel sürüm.',
+      getAppsShareText: 'AllDrop ile cihazların arasında kablosuz, şifreli dosya gönder:',
+      dlPage: 'İndirme sayfası',
+      shareLink: 'Paylaş',
+      copyLinks: 'Linkleri kopyala',
+      copied: 'Kopyalandı',
       version: 'Sürüm', perSec: '/sn', left: '{t} kaldı', justNow: 'az önce', minAgo: '{n} dk önce', hourAgo: '{n} sa önce',
       sec: 'sn', min: 'dk', browserTag: 'tarayıcı', thisHub: 'bu ağın merkezi',
       cantSelf: 'Kendinize gönderemezsiniz', hidden: 'Liste temizlendi',
@@ -102,7 +109,14 @@
       receivedN: '{n} files received', sentOk: 'Sent to {name}',
       fwOk: 'Click Yes in the window that opens.', sendtoOk: 'Added: right-click a file → Send to → AllDrop',
       secure: 'End-to-end encrypted transfer (mutual TLS) · Files never leave your local network',
-      getApps: 'Get AllDrop for your other devices',
+      getApps: 'Get / share AllDrop on your other devices',
+      getAppsTitle: 'Get AllDrop on your other devices',
+      getAppsSub: 'Open these links on any device to download, or share them. Always the latest version.',
+      getAppsShareText: 'Send files wirelessly and encrypted between your devices with AllDrop:',
+      dlPage: 'Download page',
+      shareLink: 'Share',
+      copyLinks: 'Copy links',
+      copied: 'Copied',
       version: 'Version', perSec: '/s', left: '{t} left', justNow: 'just now', minAgo: '{n} min ago', hourAgo: '{n} h ago',
       sec: 's', min: 'min', browserTag: 'browser', thisHub: 'network hub',
       cantSelf: 'You cannot send to yourself', hidden: 'List cleared',
@@ -593,6 +607,67 @@
   }
 
   // ---------- modal ----------
+  // ---------- get the app on other devices ----------
+  var DL_BASE = 'https://github.com/pilotmemorable/alldrop/releases/latest/download/';
+  var DL_PAGE = 'https://pilotmemorable.github.io/alldrop/';
+  var DL_APPS = [
+    { icon: 'windows', name: 'Windows', sub: '64-bit · .exe', url: DL_BASE + 'AllDrop-Windows-64bit.exe' },
+    { icon: 'mac', name: 'macOS', sub: '.dmg · Intel & Apple Silicon', url: DL_BASE + 'AllDrop-macOS.dmg' },
+    { icon: 'linux', name: 'Linux', sub: 'x64', url: DL_BASE + 'AllDrop-Linux-x64' },
+    { icon: 'android', name: 'Android', sub: '.apk', url: DL_BASE + 'AllDrop-Android.apk' },
+    { icon: 'ios', name: 'iPhone · iPad', sub: 'App Store', url: 'https://apps.apple.com/app/id6830793977' }
+  ];
+  function allLinksText() {
+    var s = 'AllDrop: All Device\n' + t('dlPage') + ': ' + DL_PAGE + '\n\n';
+    for (var i = 0; i < DL_APPS.length; i++) s += DL_APPS[i].name + ': ' + DL_APPS[i].url + '\n';
+    return s;
+  }
+  function fallbackCopy(txt) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = txt; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (e) {}
+  }
+  function copyText(txt) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () { toast(t('copied')); }, function () { fallbackCopy(txt); toast(t('copied')); });
+        return;
+      }
+    } catch (e) {}
+    fallbackCopy(txt); toast(t('copied'));
+  }
+  function doShareApp() {
+    try {
+      if (navigator.share) {
+        navigator.share({ title: 'AllDrop: All Device', text: t('getAppsShareText'), url: DL_PAGE }).catch(function () {});
+        return;
+      }
+    } catch (e) {}
+    copyText(DL_PAGE + '\n\n' + allLinksText());
+  }
+  function openShareApp() {
+    modalKind = 'share';
+    var list = '';
+    for (var i = 0; i < DL_APPS.length; i++) {
+      var app = DL_APPS[i];
+      list += '<a class="dl-row" href="' + esc(app.url) + '" target="_blank" rel="noopener">' +
+        '<span class="dl-ic">' + iconFor(app.icon) + '</span>' +
+        '<span class="dl-tx"><b>' + esc(app.name) + '</b><small>' + esc(app.sub) + '</small></span>' +
+        '<span class="dl-go">↓</span></a>';
+    }
+    var h = '<h3>' + esc(t('getAppsTitle')) + '</h3>' +
+      '<p class="hint">' + esc(t('getAppsSub')) + '</p>' +
+      '<div class="dl-list">' + list + '</div>' +
+      '<div class="dl-page"><code>' + esc(DL_PAGE) + '</code></div>' +
+      '<div class="row"><button class="btn" type="button" data-act="copyLinks">' + esc(t('copyLinks')) + '</button>' +
+      '<button class="btn primary" type="button" data-act="shareLink">' + esc(t('shareLink')) + '</button></div>' +
+      '<div class="row"><button class="btn" type="button" data-act="close">' + esc(t('close')) + '</button></div>';
+    openModal(h);
+  }
+
   function openModal(html) {
     $('sheet').innerHTML = html;
     show('modal', true);
@@ -940,6 +1015,9 @@
       case 'enterCode': codeDismissed[id] = 0; var ct = codeTargetActive(id); if (ct) openCode(ct); break;
       case 'decline': respond(id, false); break;
       case 'close': closeModal(); break;
+      case 'shareApp': e.preventDefault(); openShareApp(); break;
+      case 'shareLink': doShareApp(); break;
+      case 'copyLinks': copyText(allLinksText()); break;
       case 'hide': hiddenSends[id] = 1; renderTransfers(true); break;
       case 'cancelOut': cancelOut(id); break;
       case 'cancelIn': api('POST', '/api/offer/respond', { id: id.substring(1), accept: false }, function () { poll(); }); break;
