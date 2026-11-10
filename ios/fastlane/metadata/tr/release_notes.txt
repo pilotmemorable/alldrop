@@ -1,0 +1,5 @@
+Sürüm 1.1
+• Aynı anda birden fazla dosya ve klasör gönderin: "Gönderilecekler" listesine istediğiniz kadar dosya, klasör, fotoğraf ve video ekleyin, bir cihaza dokunup hepsini birlikte gönderin.
+• Klasörler alt klasörleriyle birlikte gider ve karşı tarafta aynı yapıyla kaydedilir.
+• Fotoğraf ve videolar orijinal kalitesinde seçilir.
+• Tarayıcıdan bağlanan cihazlar gelen her gönderimi tek ZIP olarak indirebilir.

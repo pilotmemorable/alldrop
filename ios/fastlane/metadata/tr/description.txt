@@ -14,7 +14,8 @@ AllDrop uygulamaları arasındaki veri aktarımı uçtan uca, karşılıklı TLS
 HER CİHAZLA
 • Windows 7, 8, 10 ve 11, macOS, Linux ve Android için ücretsiz AllDrop uygulamaları
 • Uygulaması olmayan cihazlar QR kodu okutarak tarayıcıdan bağlanır
-• Fotoğraf, video, belge, birden çok dosya; boyut sınırı yok
+• Aynı anda istediğiniz kadar dosya ve klasör: tüm klasörü alt klasörleriyle birlikte tek seferde gönderin
+• Fotoğraf ve videolar orijinal kalitesinde, birden çok seçerek; boyut sınırı yok
 • Başka uygulamalardan "Paylaş" ile AllDrop'a gönderin
 • Alınan dosyalar Dosyalar uygulamasındaki "AllDrop" klasöründe
 

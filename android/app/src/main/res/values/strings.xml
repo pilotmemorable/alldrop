@@ -13,4 +13,5 @@
     <string name="no_viewer">No app found to open this file.</string>
     <string name="shared_ready">%1$d file(s) ready – pick a device</string>
     <string name="offer_code">%1$s file(s) · code %2$s</string>
+    <string name="preparing">Preparing files…</string>
 </resources>

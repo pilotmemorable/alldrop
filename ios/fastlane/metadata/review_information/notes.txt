@@ -5,7 +5,8 @@ How to test with one iPhone/iPad and any computer on the same Wi-Fi:
 2. Scroll to "Connect a phone or tablet". Type the address shown under the QR code (for example http://192.168.1.23:45454/?k=...) into Safari or Chrome on a Mac/PC on the same Wi-Fi. (Or scan the QR code with a second iPhone.)
 3. In that browser, tap the device named "iPhone" and choose a file.
 4. A 6-digit security code appears on the iPhone. Type it in the browser: the file is transferred and appears under "Recently received" and in the Files app > On My iPhone > AllDrop.
-5. To send from the iPhone, tap the browser's device name in AllDrop and choose a photo; the browser shows a code to type on the iPhone, then a Download button.
+5. To send from the iPhone, tap the browser's device name in AllDrop and choose "Photos and videos" (several at once), "Files" or "Folder" (a whole folder with its sub folders). The browser shows a code to type on the iPhone, then a Download button and "Download all (ZIP)".
+6. Several files and folders can also be collected first with "Add files" / "Add folder" at the bottom; tapping a device then sends them all in one transfer.
 
 Desktop apps for Windows/macOS/Linux (optional): https://github.com/pilotmemorable/alldrop/releases
 Encryption: standard TLS only (ITSAppUsesNonExemptEncryption = NO).

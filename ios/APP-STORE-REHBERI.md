@@ -65,7 +65,7 @@ AIRDROP klasöründeki `App Store metinleri` (fastlane biçiminde) içindeki met
 | Anahtar kelimeler | `*/keywords.txt` (100 karakter sınırına uygun) |
 | İnceleme notu | `review_information/notes.txt` (İngilizce, inceleme ekibi için test adımları) |
 
-- **Ekran görüntüleri:** AIRDROP klasöründeki `App Store ekran goruntuleri`. iPhone 6,9" alanı için 1290×2796, iPad 13" alanı için 2048×2732.
+- **Ekran görüntüleri:** AIRDROP klasöründeki `App Store ekran goruntuleri` (her cihaz için 5 görüntü; ilki çoklu dosya/klasör listesi). iPhone 6,9" alanı için 1290×2796, iPad 13" alanı için 2048×2732.
 - **Gizlilik politikası URL'si:** GitHub Pages açıldığında `https://pilotmemorable.github.io/alldrop/privacy.html` (`docs/privacy.html`).
 - **Uygulama Gizliliği:** *Veri Toplanmıyor* (Data Not Collected).
 - **Kategori:** Yardımcı Programlar (Utilities), ikinci kategori: Verimlilik.

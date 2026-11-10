@@ -14,7 +14,8 @@ Data transfers between AllDrop apps are end-to-end encrypted with mutually authe
 WORKS WITH EVERY DEVICE
 • Free AllDrop apps for Windows 7, 8, 10 and 11, macOS, Linux and Android
 • Devices without the app join from the browser by scanning a QR code
-• Photos, videos, documents, many files at once, no size limit
+• Any number of files and folders at once: send a whole folder with its sub folders in one go
+• Photos and videos in original quality, many at a time, no size limit
 • Send to AllDrop from other apps with Share
 • Received files are in the "AllDrop" folder of the Files app
 

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const appVersion = "1.0.1"
+const appVersion = "1.1.0"
 
 // Party identifies the sender of an offer.
 type Party struct {
@@ -120,12 +120,14 @@ type Staged struct {
 }
 
 type HistoryItem struct {
-	Name string    `json:"name"`
-	Path string    `json:"path"`
-	From string    `json:"from"`
-	Size int64     `json:"size"`
-	Time time.Time `json:"time"`
-	TS   int64     `json:"ts"`
+	Name  string    `json:"name"`
+	Path  string    `json:"path"`
+	From  string    `json:"from"`
+	Group string    `json:"group"` // top-level folder of a folder transfer, "" for single files
+	Offer string    `json:"offer"`
+	Size  int64     `json:"size"`
+	Time  time.Time `json:"time"`
+	TS    int64     `json:"ts"`
 }
 
 type App struct {
