@@ -16,7 +16,12 @@
       join2: 'Kamerayla QR kodu okutun ya da aşağıdaki adresi tarayıcıya yazın.',
       join3: 'Açılan sayfadan dosya gönderin ve alın.',
       otherNet: 'Diğer ağ adresi', history: 'Son alınanlar', openFolder: 'Klasörü aç',
-      pickFiles: 'Dosya seç', pickDir: 'Klasör seç',
+      pickFiles: 'Dosya ekle', pickDir: 'Klasör ekle', pickMedia: 'Fotoğraf / video',
+      trayTitle: 'Gönderilecekler', trayHint: 'Hepsini birlikte göndermek için bir cihaza dokunun. İstediğiniz kadar dosya ve klasör ekleyebilirsiniz.',
+      nFiles: '{n} dosya', nFolders: '{n} klasör', more: '… ve {n} öğe daha',
+      chooseTitle: '{name} cihazına ne göndermek istiyorsunuz?', chooseHint: 'Birden fazla dosya seçebilir ya da klasörlerin tamamını gönderebilirsiniz. Seçtikleriniz hemen gönderilir.',
+      chooseFiles: 'Dosyalar', chooseFolder: 'Klasör', chooseMedia: 'Fotoğraf ve videolar', laterTray: 'Önce listeye ekle',
+      zipOffer: 'Hepsini indir (ZIP)', offerHead: '{name} · {n} dosya · {size}', showAll: 'Tümünü göster ({n})', preparing: 'Dosyalar hazırlanıyor…',
       dropHere: 'Bırakın, sonra bir cihaz seçin', dropOn: '{name} cihazına gönder',
       picked: '{n} dosya seçildi · {size}', pickedSub: 'Göndermek için bir cihaza dokunun.',
       staged: '{n} dosya gönderime hazır · {size}',
@@ -67,7 +72,12 @@
       join2: 'Scan the QR code with the camera, or type the address below into the browser.',
       join3: 'Send and receive files on the page that opens.',
       otherNet: 'Other network address', history: 'Recently received', openFolder: 'Open folder',
-      pickFiles: 'Choose files', pickDir: 'Choose folder',
+      pickFiles: 'Add files', pickDir: 'Add folder', pickMedia: 'Photos / videos',
+      trayTitle: 'To send', trayHint: 'Tap a device to send everything at once. Add as many files and folders as you like.',
+      nFiles: '{n} files', nFolders: '{n} folders', more: '… and {n} more',
+      chooseTitle: 'What do you want to send to {name}?', chooseHint: 'Pick several files or send whole folders. Your selection is sent right away.',
+      chooseFiles: 'Files', chooseFolder: 'Folder', chooseMedia: 'Photos and videos', laterTray: 'Add to the list first',
+      zipOffer: 'Download all (ZIP)', offerHead: '{name} · {n} files · {size}', showAll: 'Show all ({n})', preparing: 'Preparing files…',
       dropHere: 'Drop, then pick a device', dropOn: 'Send to {name}',
       picked: '{n} files selected · {size}', pickedSub: 'Tap a device to send them.',
       staged: '{n} files ready to send · {size}',
@@ -158,6 +168,9 @@
   }
 
   var ICON = {
+    folder: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4.6l2 2H19.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11z"/></svg>',
+    file: '<svg viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 1.5V8h4.5L13 3.5z"/></svg>',
+    image: '<svg viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 13.5h16l-5-6.5-3.5 4.5-2.5-3L4 17.5zM8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>',
     lock: '<svg viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2a5 5 0 0 1 5 5v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v3h6V7a3 3 0 0 0-3-3zm0 9a2 2 0 0 0-1 3.7V19h2v-2.3A2 2 0 0 0 12 13z"/></svg>',
     laptop: '<svg viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.5 4h13A1.5 1.5 0 0 1 20 5.5V15H4V5.5A1.5 1.5 0 0 1 5.5 4zM6 6v7h12V6H6zM2 16.5h20l-.6 1.6a1.5 1.5 0 0 1-1.4.9H4a1.5 1.5 0 0 1-1.4-.9L2 16.5z"/></svg>',
     desktop: '<svg viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M4.5 4h15A1.5 1.5 0 0 1 21 5.5v10a1.5 1.5 0 0 1-1.5 1.5H14v2h2.5v1.5h-9V19H10v-2H4.5A1.5 1.5 0 0 1 3 15.5v-10A1.5 1.5 0 0 1 4.5 4zM5 6v9h14V6H5z"/></svg>',
@@ -201,6 +214,9 @@
     x.send(body != null ? JSON.stringify(body) : null);
   }
 
+  // Browsers can pick whole folders (webkitdirectory) on computers; phones use the native app pickers.
+  var os = detectOS();
+  var dirOK = ('webkitdirectory' in document.createElement('input')) && os !== 'ios' && os !== 'ipad' && os !== 'android';
   var S = null, pollT = null, wasOffline = false, locked = false, helloSent = false;
   var sends = [], seq = 0, picked = [], pendingDev = null, hiddenSends = {}, seenDone = {};
   var modalKind = null, modalOffer = null, dismissed = {}, urlIdx = 0, lastQR = '', lastDevKey = '';
@@ -268,6 +284,7 @@
     $('openFolder').innerHTML = esc(t('openFolder'));
     $('pickFiles').innerHTML = esc(t('pickFiles'));
     $('pickDir').innerHTML = esc(t('pickDir'));
+    $('pickMedia').innerHTML = esc(t('pickMedia'));
     $('dropText').innerHTML = esc(t('dropHere'));
     lastDevKey = '';
   }
@@ -281,7 +298,8 @@
     $('scanBtn').innerHTML = esc(S.host.scanning ? t('scanning') : t('scan'));
     renderDevices();
     $('hint').innerHTML = esc(owner && !S.host.mobile ? t('hintOwner') : t('hintGuest'));
-    renderStaged();
+    renderTray();
+    checkAutoSend();
     renderTransfers();
     renderInbox();
     renderJoin();
@@ -318,22 +336,104 @@
 
   function sumSize(items) { var n = 0; for (var i = 0; i < items.length; i++) n += items[i].f.size; return n; }
 
-  function renderStaged() {
-    var st = S.staged;
-    var on = !!(S.me.owner && st && st.count > 0);
-    show('stagedBox', on);
-    if (on) {
-      $('stagedBox').innerHTML = '<div class="txt"><b>' + esc(t('staged', { n: st.count, size: fmtSize(st.total) })) + '</b><small>' +
-        esc((st.names || []).join(', ')) + ' — ' + esc(t('pickedSub')) + '</small></div>' +
-        '<button class="btn small" type="button" data-act="clearStaged">' + esc(t('clear')) + '</button>';
+  // ---------- the "to send" tray: any number of files and folders ----------
+  function keyOf(it) { return (it.rel || it.f.name) + '|' + it.f.size + '|' + (it.f.lastModified || 0); }
+  function addPicked(items) {
+    var seen = {};
+    for (var i = 0; i < picked.length; i++) seen[keyOf(picked[i])] = 1;
+    for (var j = 0; j < items.length; j++) {
+      var k = keyOf(items[j]);
+      if (!seen[k]) { seen[k] = 1; picked.push(items[j]); }
     }
-    show('pickedBox', picked.length > 0);
-    if (picked.length) {
-      var names = [];
-      for (var i = 0; i < picked.length && i < 4; i++) names.push(picked[i].f.name);
-      $('pickedBox').innerHTML = '<div class="txt"><b>' + esc(t('picked', { n: picked.length, size: fmtSize(sumSize(picked)) })) + '</b><small>' +
-        esc(names.join(', ')) + ' — ' + esc(t('pickedSub')) + '</small></div>' +
-        '<button class="btn small" type="button" data-act="clearPicked">' + esc(t('clear')) + '</button>';
+    renderTray();
+  }
+  function pickedGroups() {
+    var out = [], idx = {};
+    for (var i = 0; i < picked.length; i++) {
+      var it = picked[i], rel = it.rel || '', slash = rel.indexOf('/');
+      var dir = slash > 0, name = dir ? rel.substring(0, slash) : it.f.name;
+      var key = (dir ? 'd:' : 'f:') + (dir ? name : keyOf(it));
+      if (idx[key] === undefined) { idx[key] = out.length; out.push({ key: key, name: name, dir: dir, count: 0, total: 0, src: 'p' }); }
+      var g = out[idx[key]];
+      g.count++;
+      g.total += it.f.size;
+    }
+    return out;
+  }
+  function stagedCount() { return (S && S.me && S.me.owner && S.staged) ? S.staged.count : 0; }
+  function trayCount() { return picked.length + stagedCount(); }
+
+  function renderTray() {
+    if (!S) return;
+    show('stagedBox', false);
+    var groups = pickedGroups();
+    var sg = (S.me.owner && S.staged && S.staged.groups) || [];
+    for (var i = 0; i < sg.length; i++) groups.push({ key: (sg[i].dir ? 'd:' : 'f:') + sg[i].name, name: sg[i].name, dir: sg[i].dir, count: sg[i].count, total: sg[i].total, src: 's' });
+    var n = trayCount();
+    show('pickedBox', n > 0);
+    if (!n) return;
+    var files = 0, folders = 0, total = 0;
+    for (var k = 0; k < groups.length; k++) { files += groups[k].count; total += groups[k].total; if (groups[k].dir) folders++; }
+    var summary = (folders ? t('nFolders', { n: folders }) + ', ' : '') + t('nFiles', { n: files }) + ' · ' + fmtSize(total);
+    var rows = '';
+    for (var r = 0; r < groups.length && r < 60; r++) {
+      var g = groups[r];
+      var rm = g.src === 'p' ? 'data-act="rmPicked" data-id="' + esc(g.key) + '"' : 'data-act="rmStaged" data-id="' + esc(g.name) + '" data-dir="' + (g.dir ? '1' : '0') + '"';
+      rows += '<div class="trow"><span class="ticon' + (g.dir ? ' dir' : '') + '">' + (g.dir ? ICON.folder : (/\.(jpe?g|png|gif|webp|heic|heif|bmp|mp4|mov|m4v|webm)$/i.test(g.name) ? ICON.image : ICON.file)) + '</span>' +
+        '<span class="tname" title="' + esc(g.name) + '">' + esc(g.name) + '</span>' +
+        '<span class="tmeta">' + esc((g.dir ? t('nFiles', { n: g.count }) + ' · ' : '') + fmtSize(g.total)) + '</span>' +
+        '<button class="x" type="button" ' + rm + ' aria-label="' + esc(t('remove')) + '">×</button></div>';
+    }
+    if (groups.length > 60) rows += '<div class="trow more">' + esc(t('more', { n: groups.length - 60 })) + '</div>';
+    $('pickedBox').innerHTML = '<div class="tray-head"><div><b>' + esc(t('trayTitle')) + '</b><small>' + esc(summary) + '</small></div>' +
+      '<button class="btn small" type="button" data-act="clearTray">' + esc(t('clear')) + '</button></div>' +
+      '<div class="tray-list">' + rows + '</div><p class="hint">' + esc(t('trayHint')) + '</p>';
+  }
+  function renderStaged() { renderTray(); }
+
+  // ---------- choosing what to send ----------
+  var NATIVE = !!(window.AllDropNative && typeof window.AllDropNative.pick === 'function');
+  var autoSend = null; // native pickers stage files on the engine; send them to this device when they arrive
+  function pickKinds() {
+    var kinds = ['files'];
+    if (dirOK || NATIVE) kinds.push('folder');
+    if (NATIVE) kinds.push('media');
+    return kinds;
+  }
+  function pick(kind, dev) {
+    pendingDev = dev || null;
+    autoSend = null;
+    if (NATIVE) {
+      if (dev) autoSend = { id: dev.id, t: now(), base: stagedCount() };
+      try { window.AllDropNative.pick(kind); } catch (e) {}
+      return;
+    }
+    var input = kind === 'folder' ? $('dirPick') : (kind === 'media' ? $('mediaPick') : $('filePick'));
+    input.value = '';
+    input.click();
+  }
+  function openChooser(dev) {
+    var kinds = pickKinds();
+    if (kinds.length === 1) { pick('files', dev); return; }
+    modalKind = 'choose';
+    var labels = { files: ['chooseFiles', ICON.file], folder: ['chooseFolder', ICON.folder], media: ['chooseMedia', ICON.image] };
+    var btns = '';
+    for (var i = 0; i < kinds.length; i++) {
+      btns += '<button class="choice" type="button" data-act="pickFor" data-kind="' + kinds[i] + '" data-id="' + esc(dev.id) + '">' +
+        '<span class="cicon">' + labels[kinds[i]][1] + '</span><span>' + esc(t(labels[kinds[i]][0])) + '</span></button>';
+    }
+    openModal('<div class="center"><div class="avatar big-avatar k-' + esc(dev.kind) + '">' + iconFor(dev.os) + '</div>' +
+      '<h3>' + esc(t('chooseTitle', { name: dev.name })) + '</h3><p>' + esc(t('chooseHint')) + '</p></div>' +
+      '<div class="choices">' + btns + '</div>' +
+      '<div class="row"><button class="btn" type="button" data-act="close">' + esc(t('cancel')) + '</button></div>');
+  }
+  function checkAutoSend() {
+    if (!autoSend || !S) return;
+    if (now() - autoSend.t > 10 * 60 * 1000) { autoSend = null; return; }
+    if (stagedCount() > autoSend.base) {
+      var dev = findDev(autoSend.id);
+      autoSend = null;
+      if (dev) sendTray(dev);
     }
   }
 
@@ -413,26 +513,43 @@
     return s.v;
   }
 
+  var expanded = {};
   function renderInbox() {
     var items = (!S.me.owner && S.inbox) ? S.inbox.slice(0) : [];
     show('inboxBox', items.length > 0);
     if (!items.length) return;
-    items.sort(function (a, b) { return b.created - a.created || (a.name < b.name ? -1 : 1); });
-    var key = lang + JSON.stringify(items);
+    var key = lang + JSON.stringify(items) + JSON.stringify(expanded);
     if (key === renderInbox.last) return;
     renderInbox.last = key;
-    var h = '';
+    items.sort(function (a, b) { return b.created - a.created || (a.name < b.name ? -1 : 1); });
+    var order = [], byOffer = {};
     for (var i = 0; i < items.length; i++) {
-      var it = items[i];
-      var u = '/api/inbox/file?id=' + encodeURIComponent(it.id);
-      h += '<div class="item"><div class="txt"><div class="name" title="' + esc(it.name) + '">' + esc(it.name) + '</div>' +
-        '<div class="meta">' + esc(fmtSize(it.size)) + ' · ' + esc(t('from', { name: it.from })) + '</div></div><div class="acts">' +
-        (mediaType(it.name) ? '<a class="btn small" target="_blank" href="' + u + '&inline=1">' + esc(t('open')) + '</a>' : '') +
-        '<a class="btn small primary" href="' + u + '" download>' + esc(t('download')) + '</a>' +
-        '<button class="btn small" type="button" data-act="rmInbox" data-id="' + esc(it.id) + '">' + esc(t('remove')) + '</button></div></div>';
+      var o = items[i].offer;
+      if (!byOffer[o]) { byOffer[o] = []; order.push(o); }
+      byOffer[o].push(items[i]);
+    }
+    var h = '';
+    for (var g = 0; g < order.length; g++) {
+      var list = byOffer[order[g]], size = 0;
+      list.sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+      for (var j = 0; j < list.length; j++) size += list[j].size;
+      h += '<div class="ogroup"><div class="ohead"><div class="txt"><b>' + esc(t('offerHead', { name: list[0].from, n: list.length, size: fmtSize(size) })) + '</b></div>' +
+        (list.length > 1 ? '<a class="btn small primary" href="/api/inbox/zip?offer=' + encodeURIComponent(order[g]) + '">' + esc(t('zipOffer')) + '</a>' : '') + '</div>';
+      var limit = expanded[order[g]] ? list.length : 5;
+      for (var k = 0; k < list.length && k < limit; k++) {
+        var it = list[k];
+        var u = '/api/inbox/file?id=' + encodeURIComponent(it.id);
+        h += '<div class="item"><div class="txt"><div class="name" title="' + esc(it.name) + '">' + esc(it.name) + '</div>' +
+          '<div class="meta">' + esc(fmtSize(it.size)) + '</div></div><div class="acts">' +
+          (mediaType(it.name) ? '<a class="btn small" target="_blank" href="' + u + '&inline=1">' + esc(t('open')) + '</a>' : '') +
+          '<a class="btn small' + (list.length > 1 ? '' : ' primary') + '" href="' + u + '" download>' + esc(t('download')) + '</a>' +
+          '<button class="btn small" type="button" data-act="rmInbox" data-id="' + esc(it.id) + '">' + esc(t('remove')) + '</button></div></div>';
+      }
+      if (list.length > limit) h += '<button class="link-btn more-btn" type="button" data-act="expand" data-id="' + esc(order[g]) + '">' + esc(t('showAll', { n: list.length })) + '</button>';
+      h += '</div>';
     }
     $('inbox').innerHTML = h;
-    show('zipAll', items.length > 1);
+    show('zipAll', order.length > 1);
   }
 
   function renderJoin() {
@@ -456,14 +573,29 @@
     var key = lang + JSON.stringify(hs) + Math.floor(now() / 30000);
     if (key === renderHistory.last) return;
     renderHistory.last = key;
-    var h = '';
+    var h = '', rows = [], gidx = {};
     for (var i = 0; i < hs.length; i++) {
       var it = hs[i];
-      var ts = it.ts || now();
-      h += '<div class="item"><div class="txt"><div class="name" title="' + esc(it.path) + '">' + esc(it.name) + '</div>' +
-        '<div class="meta">' + esc(fmtSize(it.size)) + ' · ' + esc(t('from', { name: it.from })) + ' · ' + esc(ago(ts)) + '</div></div>' +
-        '<div class="acts"><button class="btn small" type="button" data-act="openFile" data-path="' + esc(it.path) + '">' + esc(t('open')) + '</button>' +
-        (S.host.mobile ? '' : '<button class="btn small" type="button" data-act="reveal" data-path="' + esc(it.path) + '">' + esc(t('show')) + '</button>') + '</div></div>';
+      if (it.group) {
+        var gk = it.offer + '|' + it.group;
+        if (gidx[gk] === undefined) {
+          gidx[gk] = rows.length;
+          rows.push({ dir: true, path: it.group, name: it.group.replace(/[\\\/]+$/, '').split(/[\\\/]/).pop(), from: it.from, ts: it.ts, size: 0, count: 0 });
+        }
+        var r0 = rows[gidx[gk]];
+        r0.size += it.size;
+        r0.count++;
+      } else {
+        rows.push({ dir: false, path: it.path, name: it.name, from: it.from, ts: it.ts, size: it.size });
+      }
+    }
+    for (var j = 0; j < rows.length && j < 40; j++) {
+      var row = rows[j];
+      var ts = row.ts || now();
+      h += '<div class="item"><div class="txt"><div class="name" title="' + esc(row.path) + '">' + (row.dir ? '<span class="ticon dir inline">' + ICON.folder + '</span>' : '') + esc(row.name) + '</div>' +
+        '<div class="meta">' + esc((row.dir ? t('nFiles', { n: row.count }) + ' · ' : '') + fmtSize(row.size)) + ' · ' + esc(t('from', { name: row.from })) + ' · ' + esc(ago(ts)) + '</div></div>' +
+        '<div class="acts"><button class="btn small" type="button" data-act="' + (row.dir && S.host.mobile ? 'openDownloads' : 'openFile') + '" data-path="' + esc(row.path) + '">' + esc(t('open')) + '</button>' +
+        (S.host.mobile ? '' : '<button class="btn small" type="button" data-act="reveal" data-path="' + esc(row.path) + '">' + esc(t('show')) + '</button>') + '</div></div>';
     }
     if (!h) h = '<p class="hint">' + esc(t('none')) + ' · ' + esc(S.host.downloadDir || '') + '</p>';
     $('history').innerHTML = h;
@@ -681,23 +813,24 @@
   function tapDevice(id) {
     var dev = findDev(id);
     if (!dev) return;
-    if (S.me.owner && S.staged && S.staged.count > 0) {
+    if (trayCount() > 0) { sendTray(dev); return; }
+    openChooser(dev);
+  }
+
+  // Sends everything in the tray (files and folders, any number) to one device.
+  function sendTray(dev) {
+    if (stagedCount() > 0) {
       api('POST', '/api/send/staged', { to: dev.id }, function (code, d) {
         if (code !== 200) toast(d.error || ('HTTP ' + code));
         poll();
       });
-      return;
     }
     if (picked.length) {
       var items = picked;
       picked = [];
-      renderStaged();
       startSend(dev, items);
-      return;
     }
-    pendingDev = dev;
-    $('filePick').value = '';
-    $('filePick').click();
+    renderTray();
   }
 
   function startSend(dev, items) {
@@ -903,7 +1036,7 @@
     dropped(e.dataTransfer, function (items) {
       if (!items.length) return;
       if (dev) startSend(dev, items);
-      else { picked = picked.concat(items); renderStaged(); }
+      else addPicked(items);
     });
   });
 
@@ -936,8 +1069,30 @@
       case 'cancelOut': cancelOut(id); break;
       case 'cancelIn': api('POST', '/api/offer/respond', { id: id.substring(1), accept: false }, function () { poll(); }); break;
       case 'cancelSrv': api('POST', '/api/send/cancel?id=' + encodeURIComponent(id.substring(1)), {}, function () { poll(); }); break;
-      case 'clearPicked': picked = []; renderStaged(); break;
+      case 'clearPicked': picked = []; renderTray(); break;
       case 'clearStaged': api('POST', '/api/stage/clear', {}, function () { poll(); }); break;
+      case 'clearTray':
+        picked = [];
+        if (stagedCount() > 0) api('POST', '/api/stage/clear', {}, function () { poll(); });
+        renderTray();
+        break;
+      case 'rmPicked':
+        var keep = [];
+        for (var q = 0; q < picked.length; q++) {
+          var it = picked[q], rel = it.rel || '', sl = rel.indexOf('/');
+          var k2 = sl > 0 ? 'd:' + rel.substring(0, sl) : 'f:' + keyOf(it);
+          if (k2 !== id) keep.push(it);
+        }
+        picked = keep;
+        renderTray();
+        break;
+      case 'rmStaged': api('POST', '/api/stage/remove', { name: id, dir: a.getAttribute('data-dir') === '1' }, function () { poll(); }); break;
+      case 'pickFor': var pd = findDev(id); closeModal(); pick(a.getAttribute('data-kind'), pd); break;
+      case 'expand': expanded[id] = 1; renderInbox(); break;
+      case 'openDownloads':
+        if (window.AllDropNative && window.AllDropNative.openDownloads) window.AllDropNative.openDownloads();
+        else api('POST', '/api/open', { kind: 'folder' }, function () {});
+        break;
       case 'rmInbox': api('POST', '/api/inbox/remove', { id: id }, function () { poll(); }); break;
       case 'openFile':
         if (window.AllDropNative && window.AllDropNative.openFile) window.AllDropNative.openFile(p);
@@ -1011,18 +1166,18 @@
     }
   });
 
-  $('filePick').onchange = function () {
+  function onPicked() {
     var items = toItems(this.files || []);
     if (!items.length) return;
     if (pendingDev) { var d = pendingDev; pendingDev = null; startSend(d, items); }
-    else { picked = picked.concat(items); renderStaged(); }
-  };
-  $('dirPick').onchange = function () {
-    var items = toItems(this.files || []);
-    if (items.length) { picked = picked.concat(items); renderStaged(); }
-  };
-  $('pickFiles').onclick = function () { pendingDev = null; $('filePick').value = ''; $('filePick').click(); };
-  $('pickDir').onclick = function () { $('dirPick').value = ''; $('dirPick').click(); };
+    else addPicked(items);
+  }
+  $('filePick').onchange = onPicked;
+  $('dirPick').onchange = onPicked;
+  $('mediaPick').onchange = onPicked;
+  $('pickFiles').onclick = function () { pick('files', null); };
+  $('pickDir').onclick = function () { pick('folder', null); };
+  $('pickMedia').onclick = function () { pick('media', null); };
   $('settingsBtn').onclick = openSettings;
   $('meChip').onclick = function () { if (!S) return; if (S.me.owner) openSettings(); else openRename(); };
   $('langBtn').onclick = function () {
@@ -1041,10 +1196,8 @@
   };
   $('clearInbox').onclick = function () { api('POST', '/api/inbox/remove', { all: true }, function () { poll(); }); };
 
-  // Folder picking needs webkitdirectory and is not offered on phones.
-  var os = detectOS();
-  var dirOK = ('webkitdirectory' in document.createElement('input')) && os !== 'ios' && os !== 'ipad' && os !== 'android';
-  show('pickDir', dirOK);
+  show('pickDir', dirOK || NATIVE);
+  show('pickMedia', NATIVE);
 
   document.addEventListener('visibilitychange', function () { if (!document.hidden && !locked) poll(); });
   window.addEventListener('beforeunload', function (e) {

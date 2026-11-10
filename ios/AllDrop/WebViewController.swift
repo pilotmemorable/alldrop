@@ -1,9 +1,12 @@
 import UIKit
 import WebKit
 import QuickLook
+import PhotosUI
+import UniformTypeIdentifiers
 
 /// Shows the AllDrop interface served by the in-app engine on 127.0.0.1.
-final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, QLPreviewControllerDataSource {
+final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, QLPreviewControllerDataSource,
+    UIDocumentPickerDelegate, PHPickerViewControllerDelegate {
     private var webView: WKWebView!
     private let statusLabel = UILabel()
     private var loadedPort = 0
@@ -19,6 +22,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
         window.AllDropNative = {
           platform: 'ios',
           openFile: function (p) { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'open', path: p }); },
+          pick: function (kind) { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'pick', kind: kind }); },
           openDownloads: function () { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'folder' }); }
         };
         """
@@ -107,6 +111,8 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
             let ql = QLPreviewController()
             ql.dataSource = self
             present(ql, animated: true)
+        case "pick":
+            presentPicker(kind: body["kind"] as? String ?? "files")
         case "folder":
             // Opens the Files app at AllDrop's folder.
             let path = EngineHost.shared.downloadsDir.path
@@ -115,6 +121,75 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
             }
         default:
             break
+        }
+    }
+
+    // MARK: choosing several files, whole folders, photos and videos
+
+    private func presentPicker(kind: String) {
+        let picker: UIViewController
+        switch kind {
+        case "folder":
+            let doc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.folder])
+            doc.allowsMultipleSelection = true
+            doc.delegate = self
+            picker = doc
+        case "media":
+            var config = PHPickerConfiguration()
+            config.selectionLimit = 0 // any number
+            config.filter = .any(of: [.images, .videos])
+            config.preferredAssetRepresentationMode = .current // original quality, no re-encoding
+            let ph = PHPickerViewController(configuration: config)
+            ph.delegate = self
+            picker = ph
+        default:
+            let doc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
+            doc.allowsMultipleSelection = true
+            doc.delegate = self
+            picker = doc
+        }
+        present(picker, animated: true)
+    }
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        // Folders arrive as security-scoped URLs; EngineHost copies them (sub folders included).
+        EngineHost.shared.stageIncoming(urls)
+    }
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
+        let dir = EngineHost.shared.newShareFolder()
+        let group = DispatchGroup()
+        let lock = NSLock()
+        var copies: [URL] = []
+        for (index, result) in results.enumerated() {
+            let provider = result.itemProvider
+            let type = provider.registeredTypeIdentifiers.first { id in
+                guard let t = UTType(id) else { return false }
+                return t.conforms(to: .movie) || t.conforms(to: .image)
+            } ?? UTType.data.identifier
+            group.enter()
+            provider.loadFileRepresentation(forTypeIdentifier: type) { url, _ in
+                defer { group.leave() }
+                guard let url = url else { return }
+                var name = provider.suggestedName ?? "item-\(index + 1)"
+                if !url.pathExtension.isEmpty && (name as NSString).pathExtension.isEmpty {
+                    name += "." + url.pathExtension
+                }
+                let dest = EngineHost.uniqueURL(in: dir, name: name)
+                do {
+                    try FileManager.default.copyItem(at: url, to: dest)
+                    lock.lock()
+                    copies.append(dest)
+                    lock.unlock()
+                } catch {
+                    NSLog("AllDrop could not copy picked item: %@", error.localizedDescription)
+                }
+            }
+        }
+        group.notify(queue: .main) {
+            EngineHost.shared.stageReady(copies)
         }
     }
 

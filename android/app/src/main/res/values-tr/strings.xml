@@ -13,4 +13,5 @@
     <string name="no_viewer">Bu dosyayı açacak uygulama bulunamadı.</string>
     <string name="shared_ready">%1$d dosya hazır – bir cihaz seçin</string>
     <string name="offer_code">%1$s dosya · kod: %2$s</string>
+    <string name="preparing">Dosyalar hazırlanıyor…</string>
 </resources>

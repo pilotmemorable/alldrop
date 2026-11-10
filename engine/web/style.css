@@ -89,6 +89,39 @@ code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-si
 .staged b { display: block; }
 .staged small { color: #4d5a6d; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* tray: files and folders waiting to be sent */
+.tray { background: #eaf3ff; border-color: #cfe0ff; }
+.tray-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tray-head b { display: block; font-size: 15px; }
+.tray-head small { color: #4d5a6d; }
+.tray-list { max-height: 260px; overflow: auto; -webkit-overflow-scrolling: touch; background: #fff; border-radius: 10px; border: 1px solid #d8e5f8; }
+.trow { display: flex; align-items: center; padding: 7px 10px; border-top: 1px solid #edf2fa; font-size: 14px; }
+.trow:first-child { border-top: 0; }
+.trow.more { color: #6b7380; font-size: 13px; }
+.ticon { width: 20px; height: 20px; flex-shrink: 0; margin-right: 8px; color: #7a8699; }
+.ticon.dir { color: #f2a900; }
+.ticon svg { width: 20px; height: 20px; display: block; }
+.ticon.inline { display: inline-block; vertical-align: -4px; width: 18px; height: 18px; margin-right: 6px; }
+.ticon.inline svg { width: 18px; height: 18px; }
+.tname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tmeta { color: #6b7380; font-size: 12.5px; margin-left: 10px; white-space: nowrap; }
+.trow .x { border: 0; background: none; color: #8a919c; cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px 0 10px; }
+.tray .hint { margin-top: 8px; }
+
+/* chooser */
+.choices { display: flex; flex-wrap: wrap; margin: 6px -5px 0; }
+.choice { flex: 1; min-width: 110px; margin: 5px; padding: 16px 8px; border: 1px solid #d5dbe4; border-radius: 14px; background: #f6f8fb; cursor: pointer; font-weight: 600; font-size: 14.5px; display: flex; flex-direction: column; align-items: center; }
+.choice:hover { border-color: #0a7cff; background: #eef4ff; }
+.cicon { width: 34px; height: 34px; color: #0a7cff; margin-bottom: 6px; }
+.cicon svg { width: 34px; height: 34px; }
+
+/* inbox grouped by transfer */
+.ogroup { border-top: 1px solid #eef0f4; padding-top: 10px; margin-top: 10px; }
+.ogroup:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+.ohead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.ohead .txt { min-width: 0; margin-right: 10px; }
+.more-btn { margin-top: 4px; }
+
 /* transfers */
 .tr { padding: 10px 0; border-top: 1px solid #eef0f4; }
 .tr:first-child { border-top: 0; padding-top: 0; }
@@ -136,7 +169,7 @@ code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-si
   display: flex; justify-content: center; padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom));
   background: rgba(255, 255, 255, .94); border-top: 1px solid #e3e7ee;
 }
-#bar .btn { margin: 0 5px; min-width: 150px; }
+#bar .btn { margin: 0 5px; min-width: 140px; }
 
 /* security code */
 .otp { font-size: 42px; font-weight: 700; letter-spacing: 6px; text-align: center; margin: 4px 0 6px; font-variant-numeric: tabular-nums; color: #0a62d8; }
@@ -189,7 +222,9 @@ input[type=text] {
   .join { display: block; text-align: center; }
   .join-qr { display: inline-block; margin: 0 0 12px; }
   .join-text ol { text-align: left; }
-  #bar .btn { min-width: 0; flex: 1; }
+  #bar .btn { min-width: 0; flex: 1; padding: 9px 6px; font-size: 14px; }
+  .ohead { display: block; }
+  .ohead .btn { display: block; text-align: center; margin-top: 8px; }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -221,5 +256,11 @@ input[type=text] {
   .join-qr { border-color: #262c36; }
   .banner { background: #3a2e0c; color: #f3d27a; }
   .otp { color: #5aa9ff; }
+  .tray { background: #142338; border-color: #22406a; }
+  .tray-head small, .tmeta, .trow.more { color: #a9b7cc; }
+  .tray-list { background: #10161f; border-color: #22406a; }
+  .trow, .ogroup { border-color: #1f2a3a; }
+  .choice { background: #1d222b; border-color: #333b48; }
+  .choice:hover { background: #1c2a40; border-color: #3b9bff; }
   .err { color: #ff7b80 !important; }
 }

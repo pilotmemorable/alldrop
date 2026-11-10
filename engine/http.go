@@ -204,6 +204,7 @@ func (a *App) uiHandler() http.Handler {
 	mux.HandleFunc("/api/scan", a.apiScan)
 	mux.HandleFunc("/api/stage", a.apiStage)
 	mux.HandleFunc("/api/stage/clear", a.apiStageClear)
+	mux.HandleFunc("/api/stage/remove", a.apiStageRemove)
 	mux.HandleFunc("/api/open", a.apiOpen)
 	mux.HandleFunc("/api/quit", a.apiQuit)
 	mux.HandleFunc("/api/win/firewall", a.apiFirewall)
@@ -303,8 +304,8 @@ func (a *App) apiState(w http.ResponseWriter, r *http.Request) {
 		host["trusted"] = trusted
 		host["manual"] = a.cfg.ManualPeers
 		hist := a.history
-		if len(hist) > 30 {
-			hist = hist[:30]
+		if len(hist) > 300 {
+			hist = hist[:300]
 		}
 		st["history"] = hist
 		var total int64
@@ -315,7 +316,11 @@ func (a *App) apiState(w http.ResponseWriter, r *http.Request) {
 				names = append(names, s.Rel)
 			}
 		}
-		st["staged"] = map[string]interface{}{"count": len(a.staged), "total": total, "names": names}
+		groups := a.stagedGroupsLocked()
+		if len(groups) > 200 {
+			groups = groups[:200]
+		}
+		st["staged"] = map[string]interface{}{"count": len(a.staged), "total": total, "names": names, "groups": groups}
 		var sends []sendJSON
 		for _, s := range a.sends {
 			if s.Server && time.Since(s.Updated) < 10*time.Minute {
@@ -830,6 +835,22 @@ func (a *App) apiStageClear(w http.ResponseWriter, r *http.Request) {
 			os.Remove(f.Abs)
 		}
 	}
+	writeJSON(w, 200, map[string]bool{"ok": true})
+}
+
+func (a *App) apiStageRemove(w http.ResponseWriter, r *http.Request) {
+	if !a.ownerOnly(w, r) {
+		return
+	}
+	var req struct {
+		Name string `json:"name"`
+		Dir  bool   `json:"dir"`
+	}
+	if readJSON(r, &req) != nil {
+		httpErr(w, 400, "bad json")
+		return
+	}
+	a.unstage(req.Name, req.Dir)
 	writeJSON(w, 200, map[string]bool{"ok": true})
 }
 

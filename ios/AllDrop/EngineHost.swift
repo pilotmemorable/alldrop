@@ -112,30 +112,60 @@ final class EngineHost: NSObject, AdkitListenerProtocol {
         }
     }
 
-    // MARK: files opened in / shared to AllDrop
+    // MARK: files opened in / shared to / picked in AllDrop
 
-    func stageIncoming(_ urls: [URL]) {
-        var copies: [URL] = []
+    /// A fresh temporary folder for copies that will be sent.
+    func newShareFolder() -> URL {
         let dir = shareDir.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        for url in urls {
-            let scoped = url.startAccessingSecurityScopedResource()
-            defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-            let dest = dir.appendingPathComponent(url.lastPathComponent)
-            do {
-                if url.path.hasPrefix(shareDir.path) || url.path.hasPrefix(FileManager.default.temporaryDirectory.path) {
-                    try FileManager.default.moveItem(at: url, to: dest)
-                } else {
-                    try FileManager.default.copyItem(at: url, to: dest)
-                }
-                copies.append(dest)
-            } catch {
-                NSLog("AllDrop could not read shared file: %@", error.localizedDescription)
-            }
+        return dir
+    }
+
+    static func uniqueURL(in dir: URL, name: String) -> URL {
+        var candidate = dir.appendingPathComponent(name)
+        let base = (name as NSString).deletingPathExtension
+        let ext = (name as NSString).pathExtension
+        var n = 2
+        while FileManager.default.fileExists(atPath: candidate.path) {
+            candidate = dir.appendingPathComponent(ext.isEmpty ? "\(base) (\(n))" : "\(base) (\(n)).\(ext)")
+            n += 1
         }
+        return candidate
+    }
+
+    /// Files already copied into our temporary folder: queue them for sending.
+    func stageReady(_ urls: [URL]) {
+        guard !urls.isEmpty else { return }
         queue.async {
-            self.pendingShares.append(contentsOf: copies)
+            self.pendingShares.append(contentsOf: urls)
             self.flushShares()
+        }
+    }
+
+    /// Files or whole folders from other apps or the document picker (copied first,
+    /// off the main thread so large folders do not freeze the screen).
+    func stageIncoming(_ urls: [URL]) {
+        let dir = newShareFolder()
+        let tmp = FileManager.default.temporaryDirectory.path
+        let share = shareDir.path
+        DispatchQueue.global(qos: .userInitiated).async {
+            var copies: [URL] = []
+            for url in urls {
+                let scoped = url.startAccessingSecurityScopedResource()
+                defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+                let dest = EngineHost.uniqueURL(in: dir, name: url.lastPathComponent)
+                do {
+                    if url.path.hasPrefix(share) || url.path.hasPrefix(tmp) {
+                        try FileManager.default.moveItem(at: url, to: dest)
+                    } else {
+                        try FileManager.default.copyItem(at: url, to: dest) // folders: copied with everything inside
+                    }
+                    copies.append(dest)
+                } catch {
+                    NSLog("AllDrop could not read shared file: %@", error.localizedDescription)
+                }
+            }
+            self.stageReady(copies)
         }
     }
 

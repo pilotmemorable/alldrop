@@ -18,7 +18,8 @@ Windows, Mac, Linux, Android, iPhone ve iPad arasında kablosuz dosya paylaşım
 | **Şifreleme** | Uygulamalar arası trafik karşılıklı TLS ile şifrelenir. Cihaz kimliği her cihazın kendi anahtarından türetilir. |
 | **Kurulum** | Bilgisayarda kurulum yok, tek dosyaya çift tıklanır. Uygulaması olmayan cihazlar QR kodu okutup tarayıcıdan bağlanır. |
 | **Hız** | Ağınızın izin verdiği en yüksek hız. Aynı makinedeki testte şifreli bağlantı üzerinden saniyede yaklaşık 300 MB ölçüldü; gerçek sınır Wi-Fi'nizdir. |
-| **Ekstralar** | Klasör ve çoklu dosya, sürükle-bırak, Windows'ta sağ tık → Gönder → AllDrop, Android ve iOS'ta **Paylaş** menüsü, ZIP ile toplu indirme, Türkçe/İngilizce arayüz, açık/koyu tema. |
+| **Toplu gönderim** | Aynı anda istediğiniz kadar **dosya ve klasör**: hepsini "Gönderilecekler" listesine ekleyin (Dosya ekle / Klasör ekle / Fotoğraf-video), bir cihaza dokunun, tek seferde gitsin. Klasörler alt klasörleriyle gider, karşıda aynı yapıyla kaydedilir. Android ve iOS uygulamalarında yerel klasör ve orijinal kalitede çoklu fotoğraf/video seçimi var. Tarayıcıdan bağlanan telefonlar her gönderimi tek ZIP olarak indirebilir. |
+| **Ekstralar** | Sürükle-bırak, Windows'ta sağ tık → Gönder → AllDrop, Android ve iOS'ta **Paylaş** menüsü, ZIP ile toplu indirme, Türkçe/İngilizce arayüz, açık/koyu tema. |
 
 ## İndirilecek dosyalar
 
@@ -38,7 +39,7 @@ Windows .exe dosyalarının *Özellikler → Ayrıntılar* sekmesinde ürün ad�
 
 1. AllDrop'u açın. Bilgisayarda tarayıcınızda açılır, telefonda uygulama olarak açılır.
 2. Aynı ağdaki AllDrop cihazları kendiliğinden listelenir. Uygulaması olmayan cihazlar ekrandaki QR kodu okutur.
-3. Bir cihaza dokunun ve dosyaları seçin (ya da üzerine sürükleyin).
+3. **Dosya ekle / Klasör ekle** ile istediğiniz kadar dosya ve klasör seçin (ya da cihazın üzerine sürükleyin), sonra bir cihaza dokunun. Liste boşken bir cihaza dokunursanız ne göndermek istediğiniz sorulur.
 4. Alıcının ekranında görünen **6 haneli kodu** girin. Aktarım başlar.
 
 Alınan dosyalar: bilgisayarda `İndirilenler/AllDrop`, Android'de `Download/AllDrop`, iPhone/iPad'de *Dosyalar → iPhone'umda → AllDrop*.
@@ -85,6 +86,7 @@ GitHub'a gönderip `v1.0.0` gibi bir etiket oluşturduğunuzda tüm dosyalar der
 
 **AllDrop: All Device** sends files between Windows, Mac, Linux, Android, iPhone and iPad over your local network, with no cable, internet or cloud.
 
+- **Many files and folders at once:** add any number of files, folders, photos and videos to the "To send" list and tap a device; folders keep their structure. Native pickers on Android and iOS; browser guests download each batch as one ZIP.
 - **Security code:** each transfer shows a 6-digit code on the receiver. The sender must type it before anything is sent; 5 wrong tries cancel the request. Trusted devices can skip the code.
 - App-to-app traffic uses mutually authenticated TLS; a device's ID is the hash of its own certificate.
 - Windows 7–11 (x86/x64/ARM64), macOS 10.13+ (universal), Linux, Android 5+, iOS/iPadOS 14+ (App Store). Devices without the app join from the browser via QR code.

@@ -254,9 +254,15 @@ func (a *App) fileArrivedLocked(o *Offer, idx int, dest string, temp bool) {
 	fm := o.Files[idx]
 	if o.To == "local" {
 		now := time.Now()
-		a.history = append([]HistoryItem{{Name: filepath.Base(dest), Path: dest, From: o.From.Name, Size: fm.Size, Time: now, TS: now.UnixMilli()}}, a.history...)
-		if len(a.history) > 200 {
-			a.history = a.history[:200]
+		group := ""
+		if comps := sanitizeRel(fm.Path); len(comps) > 1 {
+			if top, ok := o.topMap[comps[0]]; ok {
+				group = filepath.Join(a.recvDirLocked(), top)
+			}
+		}
+		a.history = append([]HistoryItem{{Name: filepath.Base(dest), Path: dest, From: o.From.Name, Group: group, Offer: o.ID, Size: fm.Size, Time: now, TS: now.UnixMilli()}}, a.history...)
+		if len(a.history) > 2000 {
+			a.history = a.history[:2000]
 		}
 		go a.emit("SAVED", dest)
 	} else {
@@ -816,6 +822,63 @@ func (a *App) stagePaths(paths []string, temp bool) int {
 	n := len(a.staged)
 	a.mu.Unlock()
 	return n
+}
+
+// stagedGroup is one top-level file or folder queued for sending.
+type stagedGroup struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+	Total int64  `json:"total"`
+	Dir   bool   `json:"dir"`
+}
+
+func stagedTop(rel string) (string, bool) {
+	if i := strings.IndexByte(rel, '/'); i >= 0 {
+		return rel[:i], true
+	}
+	return rel, false
+}
+
+func (a *App) stagedGroupsLocked() []stagedGroup {
+	var out []stagedGroup
+	idx := map[string]int{}
+	for _, f := range a.staged {
+		top, dir := stagedTop(f.Rel)
+		key := top
+		if dir {
+			key += "/"
+		}
+		i, ok := idx[key]
+		if !ok {
+			i = len(out)
+			idx[key] = i
+			out = append(out, stagedGroup{Name: top, Dir: dir})
+		}
+		out[i].Count++
+		out[i].Total += f.Size
+	}
+	return out
+}
+
+// unstage removes one queued top-level file or folder.
+func (a *App) unstage(name string, dir bool) {
+	a.mu.Lock()
+	var keep, drop []Staged
+	for _, f := range a.staged {
+		top, isDir := stagedTop(f.Rel)
+		if top == name && isDir == dir {
+			drop = append(drop, f)
+		} else {
+			keep = append(keep, f)
+		}
+	}
+	a.staged = keep
+	a.mu.Unlock()
+	for _, f := range drop {
+		if f.Temp {
+			os.Remove(f.Abs)
+		}
+	}
 }
 
 // ---------- guest inbox ----------

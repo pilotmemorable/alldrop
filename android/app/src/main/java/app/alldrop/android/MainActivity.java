@@ -15,6 +15,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.Gravity;
 import android.view.View;
@@ -45,6 +47,9 @@ import java.util.List;
 public class MainActivity extends Activity {
     private static final int REQ_FILES = 1;
     private static final int REQ_PERMS = 2;
+    private static final int REQ_PICK_FILES = 3;
+    private static final int REQ_PICK_MEDIA = 4;
+    private static final int REQ_PICK_TREE = 5;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private WebView web;
@@ -187,6 +192,34 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_PICK_FILES || requestCode == REQ_PICK_MEDIA) {
+            if (resultCode == RESULT_OK && data != null) {
+                final List<Uri> uris = urisFrom(data);
+                if (!uris.isEmpty()) {
+                    Toast.makeText(this, R.string.preparing, Toast.LENGTH_SHORT).show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            stageShared(uris, null);
+                        }
+                    }, "ad-pick").start();
+                }
+            }
+            return;
+        }
+        if (requestCode == REQ_PICK_TREE) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                final Uri tree = data.getData();
+                Toast.makeText(this, R.string.preparing, Toast.LENGTH_SHORT).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stageTree(tree);
+                    }
+                }, "ad-pick-folder").start();
+            }
+            return;
+        }
         if (requestCode != REQ_FILES || fileCallback == null) return;
         Uri[] result = null;
         if (resultCode == RESULT_OK && data != null) {
@@ -262,16 +295,115 @@ public class MainActivity extends Activity {
             for (Uri u : uris) {
                 String name = displayName(u, ++n);
                 File f = uniqueFile(dir, name);
-                InputStream in = getContentResolver().openInputStream(u);
-                if (in == null) continue;
-                OutputStream o = new FileOutputStream(f);
-                byte[] buf = new byte[1 << 20];
-                int r;
-                while ((r = in.read(buf)) > 0) o.write(buf, 0, r);
-                o.close();
-                in.close();
-                paths.put(f.getAbsolutePath());
+                if (copyUri(u, f)) paths.put(f.getAbsolutePath());
             }
+            postStage(paths, paths.length());
+        } catch (Exception e) {
+            android.util.Log.e("AllDrop", "share", e);
+        }
+    }
+
+    private static List<Uri> urisFrom(Intent data) {
+        List<Uri> out = new ArrayList<>();
+        ClipData clip = data.getClipData();
+        if (clip != null) {
+            for (int i = 0; i < clip.getItemCount(); i++) {
+                Uri u = clip.getItemAt(i).getUri();
+                if (u != null) out.add(u);
+            }
+        } else if (data.getData() != null) {
+            out.add(data.getData());
+        }
+        return out;
+    }
+
+    private boolean copyUri(Uri u, File dest) {
+        try {
+            InputStream in = getContentResolver().openInputStream(u);
+            if (in == null) return false;
+            OutputStream o = new FileOutputStream(dest);
+            byte[] buf = new byte[1 << 20];
+            int r;
+            while ((r = in.read(buf)) > 0) o.write(buf, 0, r);
+            o.close();
+            in.close();
+            return true;
+        } catch (Exception e) {
+            android.util.Log.w("AllDrop", "copy " + u, e);
+            dest.delete();
+            return false;
+        }
+    }
+
+    /** A whole folder chosen with the system picker, sub folders included. */
+    private void stageTree(Uri tree) {
+        try {
+            String rootId = DocumentsContract.getTreeDocumentId(tree);
+            String rootName = queryName(DocumentsContract.buildDocumentUriUsingTree(tree, rootId));
+            if (rootName == null || rootName.trim().isEmpty()) rootName = "Folder";
+            File top = new File(new File(shareDir(), Long.toString(System.currentTimeMillis())), safeName(rootName));
+            top.mkdirs();
+            int count = copyTree(tree, rootId, top, 0);
+            JSONArray paths = new JSONArray();
+            paths.put(top.getAbsolutePath());
+            postStage(paths, count);
+        } catch (Exception e) {
+            android.util.Log.e("AllDrop", "folder", e);
+        }
+    }
+
+    private int copyTree(Uri tree, String docId, File dest, int depth) {
+        if (depth > 32) return 0;
+        int count = 0;
+        Uri children = DocumentsContract.buildChildDocumentsUriUsingTree(tree, docId);
+        Cursor c = null;
+        try {
+            c = getContentResolver().query(children, new String[]{
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                    DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
+            if (c == null) return 0;
+            while (c.moveToNext()) {
+                String id = c.getString(0);
+                String name = safeName(c.getString(1));
+                String mime = c.getString(2);
+                if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mime)) {
+                    File sub = new File(dest, name);
+                    sub.mkdirs();
+                    count += copyTree(tree, id, sub, depth + 1);
+                } else if (copyUri(DocumentsContract.buildDocumentUriUsingTree(tree, id), uniqueFile(dest, name))) {
+                    count++;
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.w("AllDrop", "tree", e);
+        } finally {
+            if (c != null) c.close();
+        }
+        return count;
+    }
+
+    private String queryName(Uri u) {
+        try {
+            Cursor c = getContentResolver().query(u, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
+            if (c != null) {
+                String n = c.moveToFirst() ? c.getString(0) : null;
+                c.close();
+                return n;
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private static String safeName(String n) {
+        if (n == null || n.trim().isEmpty()) return "file";
+        return n.replace('/', '_').replace('\\', '_');
+    }
+
+    /** Hands copied files/folders to the engine; they appear in the "To send" list. */
+    private void postStage(JSONArray paths, final int count) {
+        try {
             long deadline = System.currentTimeMillis() + 20000;
             while (Engine.port == 0 && System.currentTimeMillis() < deadline) Thread.sleep(200);
             JSONObject body = new JSONObject();
@@ -288,7 +420,6 @@ public class MainActivity extends Activity {
             os.close();
             c.getResponseCode();
             c.disconnect();
-            final int count = paths.length();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -296,7 +427,7 @@ public class MainActivity extends Activity {
                 }
             });
         } catch (Exception e) {
-            android.util.Log.e("AllDrop", "share", e);
+            android.util.Log.e("AllDrop", "stage", e);
         }
     }
 
@@ -333,7 +464,47 @@ public class MainActivity extends Activity {
 
     // ---------- bridge used by the web UI ----------
 
+    private void startPicker(String kind) {
+        try {
+            if ("folder".equals(kind)) {
+                startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), REQ_PICK_TREE);
+            } else if ("media".equals(kind)) {
+                Intent i;
+                if (Build.VERSION.SDK_INT >= 33) {
+                    i = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    i.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, MediaStore.getPickImagesMaxLimit());
+                } else {
+                    i = new Intent(Intent.ACTION_GET_CONTENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    i.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"});
+                    i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                }
+                startActivityForResult(i, REQ_PICK_MEDIA);
+            } else {
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(i, REQ_PICK_FILES);
+            }
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.no_viewer, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private final class Bridge {
+        /** Native pickers: "files" (several), "folder" (whole folder) or "media" (photos and videos). */
+        @JavascriptInterface
+        public void pick(final String kind) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startPicker(kind);
+                }
+            });
+        }
+
         @JavascriptInterface
         public void openDownloads() {
             runOnUiThread(new Runnable() {

@@ -31,7 +31,7 @@
 
 <div id="main">
   <section id="stagedBox" class="card staged hidden"></section>
-  <section id="pickedBox" class="card staged hidden"></section>
+  <section id="pickedBox" class="card tray hidden"></section>
 
   <section class="card devices-card">
     <div class="card-head">
@@ -90,6 +90,7 @@
 <div id="bar">
   <button id="pickFiles" class="btn primary" type="button"></button>
   <button id="pickDir" class="btn hidden" type="button"></button>
+  <button id="pickMedia" class="btn hidden" type="button"></button>
 </div>
 
 <div id="dropOverlay" class="hidden"><div id="dropText"></div></div>
@@ -102,6 +103,7 @@
 
 <input type="file" id="filePick" multiple class="file-input">
 <input type="file" id="dirPick" multiple webkitdirectory directory class="file-input">
+<input type="file" id="mediaPick" multiple accept="image/*,video/*" class="file-input">
 
 <script src="app.js"></script>
 </body>
