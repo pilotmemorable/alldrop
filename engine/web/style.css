@@ -298,3 +298,6 @@ input[type=text] {
 [dir="rtl"] .chip .dot { margin-right: 0; margin-left: 7px; }
 [dir="rtl"] .brand img { margin-right: 0; margin-left: 8px; }
 @media (max-width: 560px) { [dir="rtl"] .join-qr { margin: 0 0 12px; } }
+/* nine download rows: keep the panel compact so the buttons stay in view */
+.dl-list { gap: 6px; margin: 8px 0; }
+.dl-row { padding: 6px 12px; }

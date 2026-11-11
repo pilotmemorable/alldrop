@@ -745,9 +745,13 @@
   var DL_BASE = 'https://github.com/pilotmemorable/alldrop/releases/latest/download/';
   var DL_PAGE = 'https://pilotmemorable.github.io/alldrop/';
   var DL_APPS = [
-    { icon: 'windows', name: 'Windows', sub: '64-bit · .exe', url: DL_BASE + 'AllDrop-Windows-64bit.exe' },
+    { icon: 'windows', name: 'Windows 64-bit', sub: '.exe · Windows 7-11', url: DL_BASE + 'AllDrop-Windows-64bit.exe' },
+    { icon: 'windows', name: 'Windows 32-bit', sub: '.exe · older PCs', url: DL_BASE + 'AllDrop-Windows-32bit.exe' },
+    { icon: 'windows', name: 'Windows ARM64', sub: '.exe', url: DL_BASE + 'AllDrop-Windows-ARM64.exe' },
     { icon: 'mac', name: 'macOS', sub: '.dmg · Intel & Apple Silicon', url: DL_BASE + 'AllDrop-macOS.dmg' },
-    { icon: 'linux', name: 'Linux', sub: 'x64', url: DL_BASE + 'AllDrop-Linux-x64' },
+    { icon: 'mac', name: 'macOS (ZIP)', sub: '.zip · AllDrop.app', url: DL_BASE + 'AllDrop-macOS.zip' },
+    { icon: 'linux', name: 'Linux x64', sub: 'x86-64', url: DL_BASE + 'AllDrop-Linux-x64' },
+    { icon: 'linux', name: 'Linux ARM64', sub: 'Raspberry Pi 4/5', url: DL_BASE + 'AllDrop-Linux-ARM64' },
     { icon: 'android', name: 'Android', sub: '.apk', url: DL_BASE + 'AllDrop-Android.apk' },
     { icon: 'ios', name: 'iPhone · iPad', sub: 'App Store', url: 'https://apps.apple.com/app/id6830793977' }
   ];
