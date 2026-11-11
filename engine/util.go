@@ -252,7 +252,7 @@ func OpenURL(target string) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
-		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", target)
+		return shellOpen(target, "")
 	case "darwin":
 		cmd = exec.Command("open", target)
 	default:
@@ -269,7 +269,7 @@ func openFolder(dir string) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
-		cmd = exec.Command("explorer", dir)
+		return shellOpen(filepath.Clean(dir), "")
 	case "darwin":
 		cmd = exec.Command("open", dir)
 	default:
@@ -286,7 +286,7 @@ func revealFile(p string) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
-		cmd = exec.Command("explorer", "/select,", p)
+		return shellOpen("explorer.exe", `/select,"`+filepath.Clean(p)+`"`)
 	case "darwin":
 		cmd = exec.Command("open", "-R", p)
 	default:

@@ -5,7 +5,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-VERSION="${VERSION:-1.1.1}"
+VERSION="${VERSION:-1.1.2}"
 GO="${GO:-go}"
 DIST=dist
 export CGO_ENABLED=0 GOFLAGS=-mod=mod GOPROXY=off GOSUMDB=off

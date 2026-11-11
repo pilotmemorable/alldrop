@@ -11,6 +11,9 @@ import (
 
 func hideWindow(cmd *exec.Cmd) {}
 
+// shellOpen only exists on Windows.
+func shellOpen(file, args string) error { return nil }
+
 func reuseControl(network, address string, c syscall.RawConn) error {
 	var serr error
 	err := c.Control(func(fd uintptr) {

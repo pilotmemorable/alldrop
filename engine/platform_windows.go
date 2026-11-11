@@ -46,6 +46,27 @@ func runElevated(file, args string) error {
 	return nil
 }
 
+// shellOpen asks Windows to open a file, folder or URL in its normal, visible window
+// (the same as double-clicking it). A hidden-window process start would leave Explorer invisible.
+func shellOpen(file, args string) error {
+	verb, _ := syscall.UTF16PtrFromString("open")
+	f, err := syscall.UTF16PtrFromString(file)
+	if err != nil {
+		return err
+	}
+	var a *uint16
+	if args != "" {
+		if a, err = syscall.UTF16PtrFromString(args); err != nil {
+			return err
+		}
+	}
+	r, _, _ := procShellExecuteW.Call(0, uintptr(unsafe.Pointer(verb)), uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(a)), 0, 1) // SW_SHOWNORMAL
+	if r <= 32 {
+		return fmt.Errorf("could not open %s (code %d)", file, r)
+	}
+	return nil
+}
+
 // addFirewallRule lets other devices on the network reach this app.
 func addFirewallRule() error {
 	exe, err := os.Executable()
