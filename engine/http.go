@@ -197,6 +197,7 @@ func (a *App) uiHandler() http.Handler {
 	mux.HandleFunc("/api/inbox/remove", a.apiInboxRemove)
 	mux.HandleFunc("/api/qr", a.apiQR)
 	mux.HandleFunc("/api/settings", a.apiSettings)
+	mux.HandleFunc("/api/pickdir", a.apiPickDir)
 	mux.HandleFunc("/api/trust/remove", a.apiTrustRemove)
 	mux.HandleFunc("/api/key/regen", a.apiKeyRegen)
 	mux.HandleFunc("/api/peer/add", a.apiPeerAdd)
@@ -673,20 +674,10 @@ func (a *App) apiSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if req.DownloadDir != nil {
-		d := strings.TrimSpace(*req.DownloadDir)
-		if strings.HasPrefix(d, "~") {
-			if h, err := os.UserHomeDir(); err == nil {
-				d = filepath.Join(h, strings.TrimPrefix(d, "~"))
-			}
-		}
-		if d == "" || !filepath.IsAbs(d) || !dirWritable(d) {
+		if err := a.SetDownloadDir(*req.DownloadDir); err != nil {
 			httpErr(w, 400, "folder is not writable")
 			return
 		}
-		a.mu.Lock()
-		a.cfg.DownloadDir = filepath.Clean(d)
-		a.dirOK = true
-		a.mu.Unlock()
 	}
 	a.mu.Lock()
 	if req.Name != nil {
@@ -925,4 +916,52 @@ func (a *App) apiSendTo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 200, map[string]bool{"ok": true})
+}
+
+// SetDownloadDir changes the folder that received files are saved to.
+func (a *App) SetDownloadDir(dir string) error {
+	d := strings.TrimSpace(dir)
+	if strings.HasPrefix(d, "~") {
+		if h, err := os.UserHomeDir(); err == nil {
+			d = filepath.Join(h, strings.TrimPrefix(d, "~"))
+		}
+	}
+	if d == "" || !filepath.IsAbs(d) || !dirWritable(d) {
+		return fmt.Errorf("folder is not writable")
+	}
+	a.mu.Lock()
+	a.cfg.DownloadDir = filepath.Clean(d)
+	a.dirOK = true
+	a.saveLocked()
+	a.mu.Unlock()
+	return nil
+}
+
+// apiPickDir shows the computer's own folder chooser and, if the owner picks
+// a folder, makes it the place where received files are saved.
+func (a *App) apiPickDir(w http.ResponseWriter, r *http.Request) {
+	if !a.ownerOnly(w, r) {
+		return
+	}
+	if mobileMode {
+		httpErr(w, 404, "not available")
+		return
+	}
+	a.mu.Lock()
+	cur := a.recvDirLocked()
+	a.mu.Unlock()
+	d, err := pickFolder(cur)
+	if err != nil {
+		httpErr(w, 500, "folder chooser unavailable")
+		return
+	}
+	if d == "" { // cancelled
+		w.WriteHeader(204)
+		return
+	}
+	if err := a.SetDownloadDir(d); err != nil {
+		httpErr(w, 400, "folder is not writable")
+		return
+	}
+	writeJSON(w, 200, map[string]string{"path": d})
 }

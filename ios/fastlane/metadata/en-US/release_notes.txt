@@ -3,3 +3,5 @@ Version 1.1
 • Folders keep their sub folders and arrive with the same structure.
 • Photos and videos are picked in original quality.
 • Devices connected from a browser can download each incoming batch as one ZIP.
+• Choose where received files are saved: Settings → Folder for received files (computers and iPhone/iPad).
+• "Open folder" and "Open file" now work reliably on Windows.

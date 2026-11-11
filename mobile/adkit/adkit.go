@@ -56,6 +56,17 @@ func Start(dataDir, downloadDir, name, platform, token, hintIPs string, l Listen
 	return a.Port()
 }
 
+// SetDownloadDir changes the folder that received files are saved to.
+func SetDownloadDir(dir string) bool {
+	mu.Lock()
+	a := app
+	mu.Unlock()
+	if a == nil {
+		return false
+	}
+	return a.SetDownloadDir(dir) == nil
+}
+
 // Stop shuts the engine down; Start may be called again afterwards.
 func Stop() {
 	mu.Lock()

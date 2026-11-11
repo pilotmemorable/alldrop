@@ -199,3 +199,33 @@ func TestStageRemoveOwnerOnly(t *testing.T) {
 		t.Fatalf("after remove: %+v", st.Staged)
 	}
 }
+
+// Choosing where received files go is owner-only and takes effect at once.
+func TestSetDownloadDirAndPickOwnerOnly(t *testing.T) {
+	app := startTestApp(t)
+	base := fmt.Sprintf("http://127.0.0.1:%d", app.Port())
+	req, _ := http.NewRequest("POST", base+"/api/pickdir", strings.NewReader(`{}`))
+	req.Host = "attacker.example"
+	req.Header.Set("X-AD", "1")
+	resp, err := (&http.Client{Timeout: 3 * time.Second}).Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode == 200 || resp.StatusCode == 204 {
+		t.Fatal("SECURITY: non-owner reached the folder chooser")
+	}
+	dir := t.TempDir()
+	if err := app.SetDownloadDir(dir); err != nil {
+		t.Fatal(err)
+	}
+	app.mu.Lock()
+	got := app.recvDirLocked()
+	app.mu.Unlock()
+	if got != filepath.Clean(dir) {
+		t.Fatalf("recv dir = %q, want %q", got, dir)
+	}
+	if app.SetDownloadDir("relative/path") == nil {
+		t.Fatal("relative path accepted")
+	}
+}

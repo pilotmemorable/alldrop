@@ -12,6 +12,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
     private var loadedPort = 0
     private var timer: Timer?
     private var previewURL: URL?
+    private var pickingSaveDir = false
 
     override func loadView() {
         let config = WKWebViewConfiguration()
@@ -23,7 +24,9 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
           platform: 'ios',
           openFile: function (p) { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'open', path: p }); },
           pick: function (kind) { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'pick', kind: kind }); },
-          openDownloads: function () { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'folder' }); }
+          openDownloads: function () { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'folder' }); },
+          pickSaveDir: function () { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'savedir' }); },
+          resetSaveDir: function () { window.webkit.messageHandlers.alldrop.postMessage({ cmd: 'resetsavedir' }); }
         };
         """
         content.addUserScript(WKUserScript(source: bridge, injectionTime: .atDocumentStart, forMainFrameOnly: true))
@@ -111,6 +114,14 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
             let ql = QLPreviewController()
             ql.dataSource = self
             present(ql, animated: true)
+        case "savedir":
+            pickingSaveDir = true
+            let doc = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.folder])
+            doc.allowsMultipleSelection = false
+            doc.delegate = self
+            present(doc, animated: true)
+        case "resetsavedir":
+            EngineHost.shared.resetSaveDir()
         case "pick":
             presentPicker(kind: body["kind"] as? String ?? "files")
         case "folder":
@@ -151,7 +162,16 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
         present(picker, animated: true)
     }
 
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        pickingSaveDir = false
+    }
+
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        if pickingSaveDir {
+            pickingSaveDir = false
+            if let url = urls.first { EngineHost.shared.setSaveDir(url) }
+            return
+        }
         // Folders arrive as security-scoped URLs; EngineHost copies them (sub folders included).
         EngineHost.shared.stageIncoming(urls)
     }

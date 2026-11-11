@@ -1,8 +1,10 @@
 package engine
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"net"
 	"net/url"
 	"os"
@@ -12,6 +14,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -309,3 +312,51 @@ func dirWritable(dir string) bool {
 	os.Remove(name)
 	return true
 }
+
+// pickFolder shows the system's folder chooser and returns the chosen
+// folder, or "" if the person cancelled. It waits until the dialog closes.
+func pickFolder(start string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		script := `try
+POSIX path of (choose folder with prompt "AllDrop")
+on error number -128
+return ""
+end try`
+		cmd = exec.CommandContext(ctx, "osascript", "-e", script)
+	case "windows":
+		ps := `Add-Type -AssemblyName System.Windows.Forms; ` +
+			`[System.Windows.Forms.Application]::EnableVisualStyles(); ` +
+			`$f = New-Object System.Windows.Forms.FolderBrowserDialog; ` +
+			`$f.Description = 'AllDrop'; $f.ShowNewFolderButton = $true; ` +
+			`$o = New-Object System.Windows.Forms.Form; $o.TopMost = $true; $o.ShowInTaskbar = $false; ` +
+			`$o.StartPosition = 'CenterScreen'; $o.Size = New-Object System.Drawing.Size(0,0); $o.Show(); ` +
+			`if ($f.ShowDialog($o) -eq 'OK') { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Write-Output $f.SelectedPath }`
+		cmd = exec.CommandContext(ctx, "powershell.exe", "-NoProfile", "-NonInteractive", "-STA", "-WindowStyle", "Hidden", "-Command", ps)
+	default:
+		if p, err := exec.LookPath("zenity"); err == nil {
+			cmd = exec.CommandContext(ctx, p, "--file-selection", "--directory", "--title=AllDrop", "--filename="+start+"/")
+		} else if p, err := exec.LookPath("kdialog"); err == nil {
+			cmd = exec.CommandContext(ctx, p, "--getexistingdirectory", start)
+		} else {
+			return "", errNoChooser
+		}
+	}
+	out, err := cmd.Output()
+	if err != nil {
+		if ee, ok := err.(*exec.ExitError); ok && ee.ExitCode() == 1 && runtime.GOOS != "windows" {
+			return "", nil // zenity / kdialog: cancelled
+		}
+		return "", err
+	}
+	d := strings.TrimSpace(string(out))
+	if len(d) > 1 {
+		d = strings.TrimRight(d, "/")
+	}
+	return d, nil
+}
+
+var errNoChooser = errors.New("no folder chooser available")

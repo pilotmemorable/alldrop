@@ -23,8 +23,50 @@ final class EngineHost: NSObject, AdkitListenerProtocol {
     private let queue = DispatchQueue(label: "app.alldrop.engine")
 
     /// Received files go to Documents, which the Files app shows as "AllDrop".
-    var downloadsDir: URL {
+    var defaultDownloadsDir: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    }
+
+    /// The folder the person chose in Settings (kept as a bookmark so it
+    /// survives restarts), or Documents.
+    var downloadsDir: URL { customDir ?? defaultDownloadsDir }
+
+    private static let bookmarkKey = "saveDirBookmark"
+    private var customDir: URL? = EngineHost.loadSaveDir()
+    private var scopedURL: URL?
+
+    private static func loadSaveDir() -> URL? {
+        guard let data = UserDefaults.standard.data(forKey: bookmarkKey) else { return nil }
+        var stale = false
+        guard let url = try? URL(resolvingBookmarkData: data, options: [], relativeTo: nil, bookmarkDataIsStale: &stale) else {
+            return nil
+        }
+        guard url.startAccessingSecurityScopedResource() else { return nil }
+        if stale, let fresh = try? url.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil) {
+            UserDefaults.standard.set(fresh, forKey: bookmarkKey)
+        }
+        return url
+    }
+
+    /// Saves received files in `url` (a folder picked with the Files app).
+    func setSaveDir(_ url: URL) {
+        let opened = url.startAccessingSecurityScopedResource()
+        guard let data = try? url.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil) else {
+            if opened { url.stopAccessingSecurityScopedResource() }
+            return
+        }
+        UserDefaults.standard.set(data, forKey: Self.bookmarkKey)
+        if let old = customDir, old != url { old.stopAccessingSecurityScopedResource() }
+        customDir = url
+        _ = AdkitSetDownloadDir(url.path)
+    }
+
+    /// Goes back to the app's own Documents folder.
+    func resetSaveDir() {
+        UserDefaults.standard.removeObject(forKey: Self.bookmarkKey)
+        customDir?.stopAccessingSecurityScopedResource()
+        customDir = nil
+        _ = AdkitSetDownloadDir(defaultDownloadsDir.path)
     }
 
     private var dataDir: URL {

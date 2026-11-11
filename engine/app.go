@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const appVersion = "1.1.2"
+const appVersion = "1.1.3"
 
 // Party identifies the sender of an offer.
 type Party struct {
